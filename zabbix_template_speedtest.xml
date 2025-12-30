@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>6.0</version>
+    <date>2025-12-30T00:00:00Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Speedtest Monitoring</template>
+            <name>Speedtest Monitoring</name>
+            <description>Template for monitoring internet speed test results via speedtest-cli. Includes download speed, upload speed, ping/latency, 24-hour averages, test statistics, and server information.</description>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Speedtest - Latest Values</name>
+                </application>
+                <application>
+                    <name>Speedtest - 24h Averages</name>
+                </application>
+                <application>
+                    <name>Speedtest - Statistics</name>
+                </application>
+                <application>
+                    <name>Speedtest - Server Info</name>
+                </application>
+            </applications>
+            <items>
+                <!-- Latest Download Speed -->
+                <item>
+                    <name>Download Speed (Latest)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>speedtest.download</key>
+                    <value_type>FLOAT</value_type>
+                    <units>Mbps</units>
+                    <description>Latest download speed from speed test</description>
+                    <applications>
+                        <application>
+                            <name>Speedtest - Latest Values</name>
+                        </application>
+                    </applications>
+                    <history>7d</history>
+                    <trends>365d</trends>
+                    <update_interval>10m</update_interval>
+                </item>
+                
+                <!-- Latest Upload Speed -->
+                <item>
+                    <name>Upload Speed (Latest)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>speedtest.upload</key>
+                    <value_type>FLOAT</value_type>
+                    <units>Mbps</units>
+                    <description>Latest upload speed from speed test</description>
+                    <applications>
+                        <application>
+                            <name>Speedtest - Latest Values</name>
+                        </application>
+                    </applications>
+                    <history>7d</history>
+                    <trends>365d</trends>
+                    <update_interval>10m</update_interval>
+                </item>
+                
+                <!-- Latest Ping -->
+                <item>
+                    <name>Ping/Latency (Latest)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>speedtest.ping</key>
+                    <value_type>FLOAT</value_type>
+                    <units>ms</units>
+                    <description>Latest ping/latency from speed test</description>
+                    <applications>
+                        <application>
+                            <name>Speedtest - Latest Values</name>
+                        </application>
+                    </applications>
+                    <history>7d</history>
+                    <trends>365d</trends>
+                    <update_interval>10m</update_interval>
+                </item>
+                
+                <!-- 24h Average Download -->
+                <item>
+                    <name>Download Speed (24h Average)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>speedtest.download_avg_24h</key>
+                    <value_type>FLOAT</value_type>
+                    <units>Mbps</units>
+                    <description>24-hour average download speed</description>
+                    <applications>
+                        <application>
+                            <name>Speedtest - 24h Averages</name>
+                        </application>
+                    </applications>
+                    <history>7d</history>
+                    <trends>365d</trends>
+                    <update_interval>5m</update_interval>
+                </item>
+                
+                <!-- 24h Average Upload -->
+                <item>
+                    <name>Upload Speed (24h Average)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>speedtest.upload_avg_24h</key>
+                    <value_type>FLOAT</value_type>
+                    <units>Mbps</units>
+                    <description>24-hour average upload speed</description>
+                    <applications>
+                        <application>
+                            <name>Speedtest - 24h Averages</name>
+                        </application>
+                    </applications>
+                    <history>7d</history>
+                    <trends>365d</trends>
+                    <update_interval>5m</update_interval>
+                </item>
+                
+                <!-- 24h Average Ping -->
+                <item>
+                    <name>Ping/Latency (24h Average)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>speedtest.ping_avg_24h</key>
+                    <value_type>FLOAT</value_type>
+                    <units>ms</units>
+                    <description>24-hour average ping/latency</description>
+                    <applications>
+                        <application>
+                            <name>Speedtest - 24h Averages</name>
+                        </application>
+                    </applications>
+                    <history>7d</history>
+                    <trends>365d</trends>
+                    <update_interval>5m</update_interval>
+                </item>
+                
+                <!-- Test Count 24h -->
+                <item>
+                    <name>Test Count (24h)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>speedtest.test_count_24h</key>
+                    <value_type>UINT64</value_type>
+                    <units>tests</units>
+                    <description>Number of speed tests performed in the last 24 hours</description>
+                    <applications>
+                        <application>
+                            <name>Speedtest - Statistics</name>
+                        </application>
+                    </applications>
+                    <history>7d</history>
+                    <trends>365d</trends>
+                    <update_interval>5m</update_interval>
+                </item>
+                
+                <!-- Last Test Time -->
+                <item>
+                    <name>Last Test Time</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>speedtest.last_test_time</key>
+                    <value_type>UINT64</value_type>
+                    <units>unixtime</units>
+                    <description>Unix timestamp of the last speed test</description>
+                    <applications>
+                        <application>
+                            <name>Speedtest - Statistics</name>
+                        </application>
+                    </applications>
+                    <history>7d</history>
+                    <trends>365d</trends>
+                    <update_interval>10m</update_interval>
+                </item>
+                
+                <!-- Server Name -->
+                <item>
+                    <name>Test Server Name</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>speedtest.server_name</key>
+                    <value_type>TEXT</value_type>
+                    <description>Name of the server used for the last speed test</description>
+                    <applications>
+                        <application>
+                            <name>Speedtest - Server Info</name>
+                        </application>
+                    </applications>
+                    <history>7d</history>
+                    <update_interval>10m</update_interval>
+                </item>
+                
+                <!-- Server Location -->
+                <item>
+                    <name>Test Server Location</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>speedtest.server_location</key>
+                    <value_type>TEXT</value_type>
+                    <description>Location of the server used for the last speed test</description>
+                    <applications>
+                        <application>
+                            <name>Speedtest - Server Info</name>
+                        </application>
+                    </applications>
+                    <history>7d</history>
+                    <update_interval>10m</update_interval>
+                </item>
+                
+                <!-- Server Country -->
+                <item>
+                    <name>Test Server Country</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>speedtest.server_country</key>
+                    <value_type>TEXT</value_type>
+                    <description>Country of the server used for the last speed test</description>
+                    <applications>
+                        <application>
+                            <name>Speedtest - Server Info</name>
+                        </application>
+                    </applications>
+                    <history>7d</history>
+                    <update_interval>10m</update_interval>
+                </item>
+            </items>
+            <triggers>
+                <!-- Download Speed Low -->
+                <trigger>
+                    <expression>{Speedtest Monitoring:speedtest.download.last()}&lt;100</expression>
+                    <name>Download speed below 100 Mbps</name>
+                    <priority>WARNING</priority>
+                    <description>Download speed has dropped below 100 Mbps. Current value: {ITEM.LASTVALUE} Mbps</description>
+                </trigger>
+                
+                <!-- Upload Speed Low -->
+                <trigger>
+                    <expression>{Speedtest Monitoring:speedtest.upload.last()}&lt;10</expression>
+                    <name>Upload speed below 10 Mbps</name>
+                    <priority>WARNING</priority>
+                    <description>Upload speed has dropped below 10 Mbps. Current value: {ITEM.LASTVALUE} Mbps</description>
+                </trigger>
+                
+                <!-- Ping High -->
+                <trigger>
+                    <expression>{Speedtest Monitoring:speedtest.ping.last()}&gt;100</expression>
+                    <name>Ping/Latency above 100ms</name>
+                    <priority>WARNING</priority>
+                    <description>Ping/Latency has exceeded 100ms. Current value: {ITEM.LASTVALUE} ms</description>
+                </trigger>
+                
+                <!-- No Tests in Last 2 Hours -->
+                <trigger>
+                    <expression>{Speedtest Monitoring:speedtest.test_count_24h.last()}&lt;12</expression>
+                    <name>Insufficient speed tests in last 24h</name>
+                    <priority>WARNING</priority>
+                    <description>Less than 12 speed tests performed in the last 24 hours (expected ~144 tests for 10-minute interval). Current count: {ITEM.LASTVALUE}</description>
+                </trigger>
+                
+                <!-- Download Speed Very Low -->
+                <trigger>
+                    <expression>{Speedtest Monitoring:speedtest.download.last()}&lt;50</expression>
+                    <name>Download speed critically low (&lt;50 Mbps)</name>
+                    <priority>HIGH</priority>
+                    <description>Download speed has dropped critically below 50 Mbps. Current value: {ITEM.LASTVALUE} Mbps</description>
+                </trigger>
+                
+                <!-- Upload Speed Very Low -->
+                <trigger>
+                    <expression>{Speedtest Monitoring:speedtest.upload.last()}&lt;5</expression>
+                    <name>Upload speed critically low (&lt;5 Mbps)</name>
+                    <priority>HIGH</priority>
+                    <description>Upload speed has dropped critically below 5 Mbps. Current value: {ITEM.LASTVALUE} Mbps</description>
+                </trigger>
+                
+                <!-- Ping Very High -->
+                <trigger>
+                    <expression>{Speedtest Monitoring:speedtest.ping.last()}&gt;200</expression>
+                    <name>Ping/Latency critically high (&gt;200ms)</name>
+                    <priority>HIGH</priority>
+                    <description>Ping/Latency has exceeded 200ms. Current value: {ITEM.LASTVALUE} ms</description>
+                </trigger>
+            </triggers>
+            <graphs>
+                <!-- Download Speed Graph -->
+                <graph>
+                    <name>Download Speed</name>
+                    <width>900</width>
+                    <height>200</height>
+                    <graph_items>
+                        <graph_item>
+                            <sortorder>0</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.download</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>1A7C11</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                        <graph_item>
+                            <sortorder>1</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.download_avg_24h</key>
+                            </item>
+                            <drawtype>2</drawtype>
+                            <color>FF0000</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                    </graph_items>
+                </graph>
+                
+                <!-- Upload Speed Graph -->
+                <graph>
+                    <name>Upload Speed</name>
+                    <width>900</width>
+                    <height>200</height>
+                    <graph_items>
+                        <graph_item>
+                            <sortorder>0</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.upload</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>00CC00</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                        <graph_item>
+                            <sortorder>1</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.upload_avg_24h</key>
+                            </item>
+                            <drawtype>2</drawtype>
+                            <color>FF0000</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                    </graph_items>
+                </graph>
+                
+                <!-- Ping/Latency Graph -->
+                <graph>
+                    <name>Ping/Latency</name>
+                    <width>900</width>
+                    <height>200</height>
+                    <graph_items>
+                        <graph_item>
+                            <sortorder>0</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.ping</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>EE0000</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                        <graph_item>
+                            <sortorder>1</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.ping_avg_24h</key>
+                            </item>
+                            <drawtype>2</drawtype>
+                            <color>FF0000</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                    </graph_items>
+                </graph>
+                
+                <!-- Combined Speed Graph -->
+                <graph>
+                    <name>Speed Test Overview</name>
+                    <width>900</width>
+                    <height>200</height>
+                    <graph_items>
+                        <graph_item>
+                            <sortorder>0</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.download</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>1A7C11</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                        <graph_item>
+                            <sortorder>1</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.upload</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>00CC00</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                        <graph_item>
+                            <sortorder>2</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.ping</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>EE0000</color>
+                            <yaxisside>1</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                    </graph_items>
+                </graph>
+            </graphs>
+        </template>
+    </templates>
+</zabbix_export>
+
