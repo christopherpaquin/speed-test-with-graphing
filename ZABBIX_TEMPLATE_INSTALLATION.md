@@ -38,11 +38,28 @@ Before installing the template, ensure you have:
 
 On your monitored host, verify the Zabbix integration is working:
 
+**For Standard (Non-Containerized) Zabbix Server:**
 ```bash
 # Test from Zabbix server
 zabbix_get -s <hostname> -k speedtest.download
 zabbix_get -s <hostname> -k speedtest.upload
 zabbix_get -s <hostname> -k speedtest.ping
+```
+
+**For Containerized Zabbix Server (Podman - RHEL 10):**
+```bash
+# Test from Zabbix server container
+podman exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.download
+podman exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.upload
+podman exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.ping
+```
+
+**For Containerized Zabbix Server (Docker - Alternative):**
+```bash
+# Test from Zabbix server container
+docker exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.download
+docker exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.upload
+docker exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.ping
 ```
 
 **Expected Output:**
@@ -503,6 +520,32 @@ Click on any item to see:
 - History graph
 - Details about the item
 
+**Test from command line:**
+
+**For Standard (Non-Containerized) Zabbix Server:**
+```bash
+zabbix_get -s <hostname> -k speedtest.download
+zabbix_get -s <hostname> -k speedtest.upload
+zabbix_get -s <hostname> -k speedtest.ping
+zabbix_get -s <hostname> -k speedtest.download_avg_24h
+```
+
+**For Containerized Zabbix Server (Podman - RHEL 10):**
+```bash
+podman exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.download
+podman exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.upload
+podman exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.ping
+podman exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.download_avg_24h
+```
+
+**For Containerized Zabbix Server (Docker - Alternative):**
+```bash
+docker exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.download
+docker exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.upload
+docker exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.ping
+docker exec -it <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.download_avg_24h
+```
+
 ### Step 3: View Graphs
 
 1. Go to **Monitoring** → **Graphs**
@@ -578,10 +621,10 @@ Click on any item to see:
    zabbix_get -s <hostname> -k speedtest.download
    
    # On Zabbix server (Podman - RHEL 10)
-   podman exec <zabbix-server-container> zabbix_get -s <hostname> -k speedtest.download
+   podman exec -it <zabbix-server-container> zabbix_get -s <hostname> -k speedtest.download
    
    # On Zabbix server (Docker - alternative)
-   docker exec <zabbix-server-container> zabbix_get -s <hostname> -k speedtest.download
+   docker exec -it <zabbix-server-container> zabbix_get -s <hostname> -k speedtest.download
    
    # On Zabbix server (Kubernetes)
    kubectl exec <zabbix-server-pod> -n <namespace> -- zabbix_get -s <hostname> -k speedtest.download
@@ -815,8 +858,8 @@ If you encounter issues not covered here:
    - Test script: `/usr/local/bin/zbx-speedtest.py speedtest.download`
    - Test agent:
      - Standard: `zabbix_get -s <host> -k speedtest.download`
-     - Podman (RHEL 10): `podman exec <container> zabbix_get -s <host> -k speedtest.download`
-     - Docker: `docker exec <container> zabbix_get -s <host> -k speedtest.download`
+     - Podman (RHEL 10): `podman exec -it <container> zabbix_get -s <host> -k speedtest.download`
+     - Docker: `docker exec -it <container> zabbix_get -s <host> -k speedtest.download`
      - Kubernetes: `kubectl exec <pod> -n <namespace> -- zabbix_get -s <host> -k speedtest.download`
    - Test data: `cat speedtest_results.json`
 
