@@ -1,0 +1,15 @@
+# Speed Test with MRTG Configuration Variables
+# Copy this file to 'vars' and update with your values
+# The 'vars' file is ignored by git
+
+# Apache IP address and port
+# Replace YOUR_IP_ADDRESS with the IP address Apache should listen on
+APACHE_LISTEN_IP="YOUR_IP_ADDRESS"
+APACHE_LISTEN_PORT="80"
+
+# Speedtest cron interval (in minutes)
+SPEEDTEST_INTERVAL="10"
+
+# MRTG update interval (in minutes)
+MRTG_UPDATE_INTERVAL="5"
+

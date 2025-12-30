@@ -9,8 +9,17 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$SCRIPT_DIR"
+
+# Load configuration from vars file if it exists
+if [ -f "$PROJECT_DIR/vars" ]; then
+    source "$PROJECT_DIR/vars"
+fi
+
+# Set defaults if not set in vars file
+SPEEDTEST_INTERVAL="${SPEEDTEST_INTERVAL:-10}"
+
 SPEEDTEST_SCRIPT="$PROJECT_DIR/speedtest_runner.py"
-CRON_JOB="*/10 * * * * cd $PROJECT_DIR && /usr/bin/python3 $SPEEDTEST_SCRIPT >> $PROJECT_DIR/speedtest_cron.log 2>&1"
+CRON_JOB="*/${SPEEDTEST_INTERVAL} * * * * cd $PROJECT_DIR && /usr/bin/python3 $SPEEDTEST_SCRIPT >> $PROJECT_DIR/speedtest_cron.log 2>&1"
 CRON_TAG="# speedtest-with-graphing"
 
 # Colors for output
@@ -63,7 +72,7 @@ fi
 (crontab -l 2>/dev/null | grep -v "$CRON_TAG"; echo "$CRON_JOB $CRON_TAG") | crontab -
 
 log_info "Cron job added successfully!"
-log_info "Speedtest will run every 10 minutes"
+log_info "Speedtest will run every $SPEEDTEST_INTERVAL minutes"
 log_info "Logs will be written to: $PROJECT_DIR/speedtest_cron.log"
 
 # Verify cron job was added

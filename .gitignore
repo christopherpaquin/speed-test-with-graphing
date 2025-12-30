@@ -30,6 +30,7 @@ speedtest_graph.png
 *.jpg
 *.jpeg
 speedtest_cron.log
+vars
 
 # MRTG files
 mrtg/

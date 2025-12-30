@@ -9,10 +9,19 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$SCRIPT_DIR"
+
+# Load configuration from vars file if it exists
+if [ -f "$PROJECT_DIR/vars" ]; then
+    source "$PROJECT_DIR/vars"
+fi
+
+# Set defaults if not set in vars file
+MRTG_UPDATE_INTERVAL="${MRTG_UPDATE_INTERVAL:-5}"
+
 MRTG_DIR="$PROJECT_DIR/mrtg"
 MRTG_CFG_DIR="$MRTG_DIR/cfg"
 MRTG_LOG_DIR="$MRTG_DIR/logs"
-CRON_JOB="*/5 * * * * env LANG=C /usr/bin/mrtg $MRTG_CFG_DIR/speedtest-download.cfg --logging $MRTG_LOG_DIR/speedtest-download.log > /dev/null 2>&1 && env LANG=C /usr/bin/mrtg $MRTG_CFG_DIR/speedtest-upload.cfg --logging $MRTG_LOG_DIR/speedtest-upload.log > /dev/null 2>&1 && env LANG=C /usr/bin/mrtg $MRTG_CFG_DIR/speedtest-ping.cfg --logging $MRTG_LOG_DIR/speedtest-ping.log > /dev/null 2>&1"
+CRON_JOB="*/${MRTG_UPDATE_INTERVAL} * * * * env LANG=C /usr/bin/mrtg $MRTG_CFG_DIR/speedtest-download.cfg --logging $MRTG_LOG_DIR/speedtest-download.log > /dev/null 2>&1; env LANG=C /usr/bin/mrtg $MRTG_CFG_DIR/speedtest-upload.cfg --logging $MRTG_LOG_DIR/speedtest-upload.log > /dev/null 2>&1; env LANG=C /usr/bin/mrtg $MRTG_CFG_DIR/speedtest-ping.cfg --logging $MRTG_LOG_DIR/speedtest-ping.log > /dev/null 2>&1"
 CRON_TAG="# mrtg-speedtest-update"
 
 # Colors for output
@@ -60,7 +69,7 @@ fi
 (crontab -l 2>/dev/null | grep -v "$CRON_TAG"; echo "$CRON_JOB $CRON_TAG") | crontab -
 
 log_info "MRTG update cron job added successfully!"
-log_info "MRTG graphs will be updated every 5 minutes"
+log_info "MRTG graphs will be updated every $MRTG_UPDATE_INTERVAL minutes"
 
 # Verify cron job was added
 log_info "Current cron jobs for $CRON_USER:"

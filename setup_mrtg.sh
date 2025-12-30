@@ -8,13 +8,33 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$SCRIPT_DIR"
+
+# Load configuration from vars file (required)
+if [ ! -f "$PROJECT_DIR/vars" ]; then
+    echo "Error: vars file not found!"
+    echo "Please copy vars.example to vars and configure your settings:"
+    echo "  cp vars.example vars"
+    echo "  # Then edit vars with your IP address and settings"
+    exit 1
+fi
+
+source "$PROJECT_DIR/vars"
+
+# Validate required variables
+if [ -z "$APACHE_LISTEN_IP" ] || [ "$APACHE_LISTEN_IP" = "YOUR_IP_ADDRESS" ]; then
+    echo "Error: APACHE_LISTEN_IP not configured in vars file!"
+    echo "Please edit vars and set APACHE_LISTEN_IP to your IP address."
+    exit 1
+fi
+
+# Set defaults for optional variables
+APACHE_LISTEN_PORT="${APACHE_LISTEN_PORT:-80}"
+
 MRTG_DIR="$PROJECT_DIR/mrtg"
 MRTG_CFG_DIR="$MRTG_DIR/cfg"
 MRTG_HTML_DIR="$MRTG_DIR/html"
 MRTG_LOG_DIR="$MRTG_DIR/logs"
 MRTG_WORK_DIR="$MRTG_DIR/work"
-APACHE_LISTEN_IP="10.1.10.53"
-APACHE_LISTEN_PORT="80"
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -260,6 +280,9 @@ fi
 log_info "Setting permissions..."
 chown -R apache:apache "$MRTG_DIR" 2>/dev/null || chown -R www-data:www-data "$MRTG_DIR" 2>/dev/null || true
 chmod -R 755 "$MRTG_DIR"
+# Ensure log files are writable (MRTG creates .log and .old files in WorkDir)
+chmod 664 "$MRTG_HTML_DIR"/*.log "$MRTG_HTML_DIR"/*.old 2>/dev/null || true
+chown apache:apache "$MRTG_HTML_DIR"/*.log "$MRTG_HTML_DIR"/*.old 2>/dev/null || chown www-data:www-data "$MRTG_HTML_DIR"/*.log "$MRTG_HTML_DIR"/*.old 2>/dev/null || true
 
 # Set SELinux context if SELinux is enabled
 if command -v getenforce &> /dev/null && [ "$(getenforce)" != "Disabled" ]; then
