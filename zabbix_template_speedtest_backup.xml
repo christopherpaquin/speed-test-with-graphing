@@ -213,6 +213,146 @@
                     <update_interval>10m</update_interval>
                 </item>
             </items>
-            </template>
+            <graphs>
+                
+                <graph>
+                    <uuid>714127a0-4e7c-4085-80d4-751f3ad33deb</uuid>
+                    <name>Download Speed</name>
+                    <width>900</width>
+                    <height>200</height>
+                    <graph_items>
+                        <graph_item>
+                            <sortorder>0</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.download</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>1A7C11</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                        <graph_item>
+                            <sortorder>1</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.download_avg_24h</key>
+                            </item>
+                            <drawtype>2</drawtype>
+                            <color>FF0000</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                    </graph_items>
+                </graph>
+                
+                
+                <graph>
+                    <uuid>98a5546d-0a63-49a3-8698-ea8d7ef0b64e</uuid>
+                    <name>Upload Speed</name>
+                    <width>900</width>
+                    <height>200</height>
+                    <graph_items>
+                        <graph_item>
+                            <sortorder>0</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.upload</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>00CC00</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                        <graph_item>
+                            <sortorder>1</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.upload_avg_24h</key>
+                            </item>
+                            <drawtype>2</drawtype>
+                            <color>FF0000</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                    </graph_items>
+                </graph>
+                
+                
+                <graph>
+                    <uuid>f5145e21-4e42-4aa9-873f-42f7a3321e47</uuid>
+                    <name>Ping/Latency</name>
+                    <width>900</width>
+                    <height>200</height>
+                    <graph_items>
+                        <graph_item>
+                            <sortorder>0</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.ping</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>EE0000</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                        <graph_item>
+                            <sortorder>1</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.ping_avg_24h</key>
+                            </item>
+                            <drawtype>2</drawtype>
+                            <color>FF0000</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                    </graph_items>
+                </graph>
+                
+                
+                <graph>
+                    <uuid>f3672f9e-66f6-4665-b39e-cd73352e97c3</uuid>
+                    <name>Speed Test Overview</name>
+                    <width>900</width>
+                    <height>200</height>
+                    <graph_items>
+                        <graph_item>
+                            <sortorder>0</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.download</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>1A7C11</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                        <graph_item>
+                            <sortorder>1</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.upload</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>00CC00</color>
+                            <yaxisside>0</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                        <graph_item>
+                            <sortorder>2</sortorder>
+                            <item>
+                                <host>Speedtest Monitoring</host>
+                                <key>speedtest.ping</key>
+                            </item>
+                            <drawtype>0</drawtype>
+                            <color>EE0000</color>
+                            <yaxisside>1</yaxisside>
+                            <calc_fnc>2</calc_fnc>
+                        </graph_item>
+                    </graph_items>
+                </graph>
+            </graphs>
+        </template>
     </templates>
 </zabbix_export>
