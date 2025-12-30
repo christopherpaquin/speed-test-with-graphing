@@ -1,10 +1,10 @@
 zabbix_export:
   version: '7.2'
   template_groups:
-  - uuid: "00000000000000000000000000000001"
+  - uuid: null
     name: Templates
   templates:
-  - uuid: "91ae8bb6fc614f92a701bcaeb6d7f9ec"
+  - uuid: null
     template: Speedtest Monitoring
     name: Speedtest Monitoring
     description: Template for monitoring internet speed test results via speedtest-cli.
@@ -13,7 +13,7 @@ zabbix_export:
     groups:
     - name: Templates
     items:
-    - uuid: "1d833744d91f46679c556b55ba795617"
+    - uuid: null
       name: Download Speed (Latest)
       type: ZABBIX_ACTIVE
       key: speedtest.download
@@ -22,7 +22,7 @@ zabbix_export:
       history: 7d
       trends: 365d
       units: Mbps
-    - uuid: "e24558afbb7148899a615da5a429c8c7"
+    - uuid: null
       name: Upload Speed (Latest)
       type: ZABBIX_ACTIVE
       key: speedtest.upload
@@ -31,7 +31,7 @@ zabbix_export:
       history: 7d
       trends: 365d
       units: Mbps
-    - uuid: "444906f3e73e48e99d15a0c375c53a29"
+    - uuid: null
       name: Ping/Latency (Latest)
       type: ZABBIX_ACTIVE
       key: speedtest.ping
@@ -40,7 +40,7 @@ zabbix_export:
       history: 7d
       trends: 365d
       units: ms
-    - uuid: "3e9da59e51fd4a3f9f043a857b8f4aca"
+    - uuid: null
       name: Download Speed (24h Average)
       type: ZABBIX_ACTIVE
       key: speedtest.download_avg_24h
@@ -49,7 +49,7 @@ zabbix_export:
       history: 7d
       trends: 365d
       units: Mbps
-    - uuid: "0bd4d090191c4bfba5bf708459c26969"
+    - uuid: null
       name: Upload Speed (24h Average)
       type: ZABBIX_ACTIVE
       key: speedtest.upload_avg_24h
@@ -58,7 +58,7 @@ zabbix_export:
       history: 7d
       trends: 365d
       units: Mbps
-    - uuid: "89fa24060a094aeaa263276d3279efd0"
+    - uuid: null
       name: Ping/Latency (24h Average)
       type: ZABBIX_ACTIVE
       key: speedtest.ping_avg_24h
@@ -67,7 +67,7 @@ zabbix_export:
       history: 7d
       trends: 365d
       units: ms
-    - uuid: "47f61951e8a34bd3a89f3f655124b360"
+    - uuid: null
       name: Test Count (24h)
       type: ZABBIX_ACTIVE
       key: speedtest.test_count_24h
@@ -76,7 +76,7 @@ zabbix_export:
       history: 7d
       trends: 365d
       units: tests
-    - uuid: "1c95ed5a56a544e69da25a3459e50cb6"
+    - uuid: null
       name: Last Test Time
       type: ZABBIX_ACTIVE
       key: speedtest.last_test_time
@@ -85,21 +85,21 @@ zabbix_export:
       history: 7d
       trends: 365d
       units: unixtime
-    - uuid: "4d78eecc32e44057a805cf53191cb242"
+    - uuid: null
       name: Test Server Name
       type: ZABBIX_ACTIVE
       key: speedtest.server_name
       value_type: TEXT
       delay: 10m
       history: 7d
-    - uuid: "ce2794f56d064c9dba69499ffdf1ae98"
+    - uuid: null
       name: Test Server Location
       type: ZABBIX_ACTIVE
       key: speedtest.server_location
       value_type: TEXT
       delay: 10m
       history: 7d
-    - uuid: "2b7e795278974c70b9282a9044c1cb6c"
+    - uuid: null
       name: Test Server Country
       type: ZABBIX_ACTIVE
       key: speedtest.server_country
