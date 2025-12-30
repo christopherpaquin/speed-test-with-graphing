@@ -1,6 +1,29 @@
-# Installing the Speedtest Zabbix Template
+# 📡 Installing the Speedtest Zabbix Template
 
-This guide provides step-by-step instructions for installing the Speedtest Monitoring template on your Zabbix server.
+> Step-by-step instructions for installing the Speedtest Monitoring template on your Zabbix server.
+
+![Zabbix](https://img.shields.io/badge/zabbix-5.0+-blue)
+![Template](https://img.shields.io/badge/template-ready-success)
+![RHEL](https://img.shields.io/badge/RHEL-10-red)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+---
+
+## 📋 Table of Contents
+
+- [Prerequisites](#-prerequisites)
+- [Containerized Zabbix Deployments](#-containerized-zabbix-deployments)
+- [Method 1: Import via Web Interface](#-method-1-import-via-web-interface-recommended)
+- [Method 2: Apply Template to Host](#-method-2-apply-template-to-host)
+- [Verification](#-verification)
+- [Troubleshooting](#-troubleshooting)
+- [Post-Installation Configuration](#-post-installation-configuration)
+- [Updating the Template](#-updating-the-template)
+- [Quick Reference](#-quick-reference)
+- [Getting Help](#-getting-help)
+- [Installation Checklist](#-installation-checklist)
+
+---
 
 ## 📋 Prerequisites
 
@@ -33,6 +56,325 @@ If these commands return values (not "Not supported"), the host is ready for the
 
 ---
 
+## 🐳 Containerized Zabbix Deployments
+
+> **Note:** These instructions are for **RHEL 10** deployments using **Podman**. For Docker deployments, replace `podman` with `docker` in all commands.
+
+If your Zabbix server is running in a container (Podman, Docker, Kubernetes, etc.), the commands and procedures are slightly different.
+
+### 🐳 Podman Deployment (RHEL 10)
+
+> **RHEL 10 Note:** RHEL 10 uses Podman by default instead of Docker. All commands use `podman` instead of `docker`.
+
+#### Accessing Zabbix Server Container
+
+**Find the container name:**
+```bash
+podman ps | grep zabbix
+```
+
+**Access the container:**
+```bash
+# Access Zabbix server container
+podman exec -it <zabbix-server-container-name> /bin/bash
+
+# Or if using podman-compose (if installed)
+podman-compose exec zabbix-server /bin/bash
+```
+
+> 💡 **Note:** On RHEL 10, use `podman` instead of `docker`. Podman is rootless by default, so you may not need `sudo`.
+
+#### Running zabbix_get from Container
+
+**Option 1: Execute command directly**
+```bash
+# From host machine (RHEL 10)
+podman exec <zabbix-server-container-name> zabbix_get -s <hostname> -k speedtest.download
+
+# Or with podman-compose (if installed)
+podman-compose exec zabbix-server zabbix_get -s <hostname> -k speedtest.download
+```
+
+**Option 2: Access container shell first**
+```bash
+# Enter container
+podman exec -it <zabbix-server-container-name> /bin/bash
+
+# Then run commands inside container
+zabbix_get -s <hostname> -k speedtest.download
+zabbix_get -s <hostname> -k speedtest.upload
+zabbix_get -s <hostname> -k speedtest.ping
+```
+
+#### Downloading Template File in Container
+
+**Option 1: Download inside container**
+```bash
+# Enter container
+podman exec -it <zabbix-server-container-name> /bin/bash
+
+# Download template
+wget https://raw.githubusercontent.com/christopherpaquin/speed-test-with-graphing/main/zabbix_template_speedtest.xml
+
+# Or use curl
+curl -O https://raw.githubusercontent.com/christopherpaquin/speed-test-with-graphing/main/zabbix_template_speedtest.xml
+```
+
+**Option 2: Copy from host to container**
+```bash
+# From host machine (RHEL 10), copy file into container
+podman cp zabbix_template_speedtest.xml <zabbix-server-container-name>:/tmp/
+
+# Then access container and move file
+podman exec -it <zabbix-server-container-name> /bin/bash
+mv /tmp/zabbix_template_speedtest.xml /tmp/
+```
+
+**Option 3: Use volume mount**
+If you have a volume mounted, copy the file to the mounted directory:
+```bash
+# Copy to mounted volume directory
+cp zabbix_template_speedtest.xml /path/to/mounted/volume/
+
+# File will be accessible inside container at mounted path
+```
+
+#### Accessing Zabbix Web Interface
+
+The web interface is typically accessible via:
+- **Port mapping:** `http://localhost:<mapped-port>/zabbix`
+- **Container network:** `http://<container-ip>/zabbix`
+- **Podman-compose:** Check your `podman-compose.yml` or `docker-compose.yml` for port mappings
+
+**Find the port:**
+```bash
+podman ps | grep zabbix
+# Look for port mapping like: 0.0.0.0:8080->80/tcp
+```
+
+#### Checking Zabbix Server Logs (Container)
+
+```bash
+# View logs (RHEL 10 / Podman)
+podman logs <zabbix-server-container-name>
+
+# Follow logs
+podman logs -f <zabbix-server-container-name>
+
+# Or with podman-compose (if installed)
+podman-compose logs zabbix-server
+podman-compose logs -f zabbix-server
+```
+
+> 💡 **RHEL 10 Note:** Podman logs work similarly to Docker, but Podman is rootless by default, so you typically don't need `sudo`.
+
+### Kubernetes Deployment
+
+#### Accessing Zabbix Server Pod
+
+**Find the pod:**
+```bash
+kubectl get pods -n <namespace> | grep zabbix-server
+```
+
+**Access the pod:**
+```bash
+# Access Zabbix server pod
+kubectl exec -it <zabbix-server-pod-name> -n <namespace> -- /bin/bash
+
+# Or if using default namespace
+kubectl exec -it <zabbix-server-pod-name> -- /bin/bash
+```
+
+#### Running zabbix_get from Pod
+
+**Option 1: Execute command directly**
+```bash
+# From host machine
+kubectl exec <zabbix-server-pod-name> -n <namespace> -- zabbix_get -s <hostname> -k speedtest.download
+```
+
+**Option 2: Access pod shell first**
+```bash
+# Enter pod
+kubectl exec -it <zabbix-server-pod-name> -n <namespace> -- /bin/bash
+
+# Then run commands inside pod
+zabbix_get -s <hostname> -k speedtest.download
+zabbix_get -s <hostname> -k speedtest.upload
+zabbix_get -s <hostname> -k speedtest.ping
+```
+
+#### Downloading Template File in Pod
+
+**Option 1: Download inside pod**
+```bash
+# Enter pod
+kubectl exec -it <zabbix-server-pod-name> -n <namespace> -- /bin/bash
+
+# Download template
+wget https://raw.githubusercontent.com/christopherpaquin/speed-test-with-graphing/main/zabbix_template_speedtest.xml
+
+# Or use curl
+curl -O https://raw.githubusercontent.com/christopherpaquin/speed-test-with-graphing/main/zabbix_template_speedtest.xml
+```
+
+**Option 2: Copy from host to pod**
+```bash
+# From host machine, copy file into pod
+kubectl cp zabbix_template_speedtest.xml <namespace>/<zabbix-server-pod-name>:/tmp/
+
+# Then access pod and verify
+kubectl exec -it <zabbix-server-pod-name> -n <namespace> -- ls -l /tmp/zabbix_template_speedtest.xml
+```
+
+**Option 3: Use ConfigMap (Recommended for Kubernetes)**
+```bash
+# Create ConfigMap from template file
+kubectl create configmap zabbix-speedtest-template \
+  --from-file=zabbix_template_speedtest.xml \
+  -n <namespace>
+
+# Mount ConfigMap in Zabbix server deployment
+# Edit your deployment YAML to mount the ConfigMap
+# Then access file at mounted path inside pod
+```
+
+#### Accessing Zabbix Web Interface (Kubernetes)
+
+**Find the service:**
+```bash
+kubectl get svc -n <namespace> | grep zabbix
+```
+
+**Access via port-forward:**
+```bash
+# Forward port to local machine
+kubectl port-forward svc/<zabbix-service-name> 8080:80 -n <namespace>
+
+# Then access: http://localhost:8080/zabbix
+```
+
+**Access via NodePort or LoadBalancer:**
+```bash
+# Check service type and external IP
+kubectl get svc <zabbix-service-name> -n <namespace>
+
+# Access via external IP or NodePort
+# http://<external-ip>/zabbix
+# or
+# http://<node-ip>:<nodeport>/zabbix
+```
+
+#### Checking Zabbix Server Logs (Kubernetes)
+
+```bash
+# View logs
+kubectl logs <zabbix-server-pod-name> -n <namespace>
+
+# Follow logs
+kubectl logs -f <zabbix-server-pod-name> -n <namespace>
+
+# View logs from all containers in pod
+kubectl logs <zabbix-server-pod-name> -n <namespace> --all-containers=true
+```
+
+### Container-Specific Considerations
+
+#### File Paths
+
+In containers, file paths may differ:
+- **Config files:** May be in `/etc/zabbix/` or mounted volumes
+- **Log files:** May be in `/var/log/zabbix/` or stdout/stderr
+- **Data files:** May be in persistent volumes
+
+**Find actual paths:**
+```bash
+# Docker
+docker exec <container-name> find / -name "zabbix_server.conf" 2>/dev/null
+
+# Kubernetes
+kubectl exec <pod-name> -n <namespace> -- find / -name "zabbix_server.conf" 2>/dev/null
+```
+
+#### Persistent Storage
+
+Ensure template imports persist across container restarts:
+- **Docker:** Use named volumes or bind mounts
+- **Kubernetes:** Use PersistentVolumes (PV) and PersistentVolumeClaims (PVC)
+
+#### Network Access
+
+Containers need network access to:
+- Monitored hosts (for zabbix_get)
+- Zabbix database (if separate container)
+- External repositories (for downloading templates)
+
+**Test connectivity:**
+```bash
+# From container/pod
+ping <monitored-host-ip>
+telnet <monitored-host-ip> 10050  # Zabbix agent port
+```
+
+### Quick Reference: Container Commands
+
+**Podman (RHEL 10):**
+```bash
+# Execute command
+podman exec <container> <command>
+
+# Access shell
+podman exec -it <container> /bin/bash
+
+# Copy file
+podman cp <file> <container>:/path/
+
+# View logs
+podman logs <container>
+
+# List containers
+podman ps
+
+# Start/stop container
+podman start <container>
+podman stop <container>
+```
+
+**Docker (Alternative):**
+```bash
+# Execute command
+docker exec <container> <command>
+
+# Access shell
+docker exec -it <container> /bin/bash
+
+# Copy file
+docker cp <file> <container>:/path/
+
+# View logs
+docker logs <container>
+```
+
+> ⚠️ **RHEL 10:** Use `podman` instead of `docker`. Podman is the default container runtime on RHEL 10.
+
+**Kubernetes:**
+```bash
+# Execute command
+kubectl exec <pod> -n <namespace> -- <command>
+
+# Access shell
+kubectl exec -it <pod> -n <namespace> -- /bin/bash
+
+# Copy file
+kubectl cp <file> <namespace>/<pod>:/path/
+
+# View logs
+kubectl logs <pod> -n <namespace>
+```
+
+---
+
 ## 📥 Method 1: Import via Web Interface (Recommended)
 
 This is the easiest method and works for most users.
@@ -54,10 +396,15 @@ cd speed-test-with-graphing
 ```
 
 **Option C: Download via Command Line**
+
+**For standard (non-containerized) Zabbix:**
 ```bash
 # From Zabbix server or any Linux machine
 wget https://raw.githubusercontent.com/christopherpaquin/speed-test-with-graphing/main/zabbix_template_speedtest.xml
 ```
+
+**For containerized Zabbix:**
+- See [Containerized Zabbix Deployments](#-containerized-zabbix-deployments) section above for container-specific download instructions
 
 ### Step 2: Access Zabbix Web Interface
 
@@ -227,8 +574,17 @@ Click on any item to see:
 
 2. **Test UserParameters:**
    ```bash
-   # On Zabbix server
+   # On Zabbix server (standard deployment)
    zabbix_get -s <hostname> -k speedtest.download
+   
+   # On Zabbix server (Podman - RHEL 10)
+   podman exec <zabbix-server-container> zabbix_get -s <hostname> -k speedtest.download
+   
+   # On Zabbix server (Docker - alternative)
+   docker exec <zabbix-server-container> zabbix_get -s <hostname> -k speedtest.download
+   
+   # On Zabbix server (Kubernetes)
+   kubectl exec <zabbix-server-pod> -n <namespace> -- zabbix_get -s <hostname> -k speedtest.download
    ```
    - Should return a number, not "Not supported"
    - If "Not supported", check agent configuration
@@ -432,8 +788,18 @@ Monitoring → Graphs → Select host → View graphs
 If you encounter issues not covered here:
 
 1. **Check Logs:**
-   - Zabbix server logs: `/var/log/zabbix/zabbix_server.log`
-   - Zabbix agent logs: `journalctl -u zabbix-agent`
+   - **Standard deployment:**
+     - Zabbix server logs: `/var/log/zabbix/zabbix_server.log`
+     - Zabbix agent logs: `journalctl -u zabbix-agent`
+   - **Podman deployment (RHEL 10):**
+     - Zabbix server logs: `podman logs <zabbix-server-container>`
+     - Zabbix agent logs: `podman logs <zabbix-agent-container>`
+   - **Docker deployment (alternative):**
+     - Zabbix server logs: `docker logs <zabbix-server-container>`
+     - Zabbix agent logs: `docker logs <zabbix-agent-container>`
+   - **Kubernetes deployment:**
+     - Zabbix server logs: `kubectl logs <zabbix-server-pod> -n <namespace>`
+     - Zabbix agent logs: `kubectl logs <zabbix-agent-pod> -n <namespace>`
 
 2. **Verify Prerequisites:**
    - Host has Zabbix agent running
@@ -447,7 +813,11 @@ If you encounter issues not covered here:
 
 4. **Test Components:**
    - Test script: `/usr/local/bin/zbx-speedtest.py speedtest.download`
-   - Test agent: `zabbix_get -s <host> -k speedtest.download`
+   - Test agent:
+     - Standard: `zabbix_get -s <host> -k speedtest.download`
+     - Podman (RHEL 10): `podman exec <container> zabbix_get -s <host> -k speedtest.download`
+     - Docker: `docker exec <container> zabbix_get -s <host> -k speedtest.download`
+     - Kubernetes: `kubectl exec <pod> -n <namespace> -- zabbix_get -s <host> -k speedtest.download`
    - Test data: `cat speedtest_results.json`
 
 ---
