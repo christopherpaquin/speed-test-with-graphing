@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <zabbix_export>
     <version>6.0</version>
     <date>2025-12-30T00:00:00Z</date>
@@ -9,7 +9,7 @@
         </group>
     </groups>
     <templates>
-        <template>
+        <template><uuid>91ae8bb6-fc61-4f92-a701-bcaeb6d7f9ec</uuid>
             <template>Speedtest Monitoring</template>
             <name>Speedtest Monitoring</name>
             <description>Template for monitoring internet speed test results via speedtest-cli. Includes download speed, upload speed, ping/latency, 24-hour averages, test statistics, and server information.</description>
@@ -20,7 +20,7 @@
                 </group>
             </groups>
             <items>
-                <!-- Latest Download Speed -->
+                
                 <item>
                     <name>Download Speed (Latest)</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -38,7 +38,7 @@
                     <update_interval>10m</update_interval>
                 </item>
                 
-                <!-- Latest Upload Speed -->
+                
                 <item>
                     <name>Upload Speed (Latest)</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -56,7 +56,7 @@
                     <update_interval>10m</update_interval>
                 </item>
                 
-                <!-- Latest Ping -->
+                
                 <item>
                     <name>Ping/Latency (Latest)</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -74,7 +74,7 @@
                     <update_interval>10m</update_interval>
                 </item>
                 
-                <!-- 24h Average Download -->
+                
                 <item>
                     <name>Download Speed (24h Average)</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -92,7 +92,7 @@
                     <update_interval>5m</update_interval>
                 </item>
                 
-                <!-- 24h Average Upload -->
+                
                 <item>
                     <name>Upload Speed (24h Average)</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -110,7 +110,7 @@
                     <update_interval>5m</update_interval>
                 </item>
                 
-                <!-- 24h Average Ping -->
+                
                 <item>
                     <name>Ping/Latency (24h Average)</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -128,7 +128,7 @@
                     <update_interval>5m</update_interval>
                 </item>
                 
-                <!-- Test Count 24h -->
+                
                 <item>
                     <name>Test Count (24h)</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -146,7 +146,7 @@
                     <update_interval>5m</update_interval>
                 </item>
                 
-                <!-- Last Test Time -->
+                
                 <item>
                     <name>Last Test Time</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -164,7 +164,7 @@
                     <update_interval>10m</update_interval>
                 </item>
                 
-                <!-- Server Name -->
+                
                 <item>
                     <name>Test Server Name</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -180,7 +180,7 @@
                     <update_interval>10m</update_interval>
                 </item>
                 
-                <!-- Server Location -->
+                
                 <item>
                     <name>Test Server Location</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -196,7 +196,7 @@
                     <update_interval>10m</update_interval>
                 </item>
                 
-                <!-- Server Country -->
+                
                 <item>
                     <name>Test Server Country</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -213,66 +213,66 @@
                 </item>
             </items>
             <triggers>
-                <!-- Download Speed Low -->
+                
                 <trigger>
-                    <expression>{Speedtest Monitoring:speedtest.download.last()}&lt;100</expression>
+                    <uuid>16b73008-cb1e-42ea-ad7d-82271387ab0c</uuid><expression>{Speedtest Monitoring:speedtest.download.last()}&lt;100</expression>
                     <name>Download speed below 100 Mbps</name>
                     <priority>WARNING</priority>
                     <description>Download speed has dropped below 100 Mbps. Current value: {ITEM.LASTVALUE} Mbps</description>
                 </trigger>
                 
-                <!-- Upload Speed Low -->
+                
                 <trigger>
-                    <expression>{Speedtest Monitoring:speedtest.upload.last()}&lt;10</expression>
+                    <uuid>900e58b9-b4d2-4ee9-9b2d-9375b6499fcd</uuid><expression>{Speedtest Monitoring:speedtest.upload.last()}&lt;10</expression>
                     <name>Upload speed below 10 Mbps</name>
                     <priority>WARNING</priority>
                     <description>Upload speed has dropped below 10 Mbps. Current value: {ITEM.LASTVALUE} Mbps</description>
                 </trigger>
                 
-                <!-- Ping High -->
+                
                 <trigger>
-                    <expression>{Speedtest Monitoring:speedtest.ping.last()}&gt;100</expression>
+                    <uuid>b6695b3f-10ba-4dee-ad90-8dc227a261eb</uuid><expression>{Speedtest Monitoring:speedtest.ping.last()}&gt;100</expression>
                     <name>Ping/Latency above 100ms</name>
                     <priority>WARNING</priority>
                     <description>Ping/Latency has exceeded 100ms. Current value: {ITEM.LASTVALUE} ms</description>
                 </trigger>
                 
-                <!-- No Tests in Last 2 Hours -->
+                
                 <trigger>
-                    <expression>{Speedtest Monitoring:speedtest.test_count_24h.last()}&lt;12</expression>
+                    <uuid>678e017f-c870-4d2d-8e07-441a9ec68a5d</uuid><expression>{Speedtest Monitoring:speedtest.test_count_24h.last()}&lt;12</expression>
                     <name>Insufficient speed tests in last 24h</name>
                     <priority>WARNING</priority>
                     <description>Less than 12 speed tests performed in the last 24 hours (expected ~144 tests for 10-minute interval). Current count: {ITEM.LASTVALUE}</description>
                 </trigger>
                 
-                <!-- Download Speed Very Low -->
+                
                 <trigger>
-                    <expression>{Speedtest Monitoring:speedtest.download.last()}&lt;50</expression>
+                    <uuid>946bac85-0311-4aba-8f04-86a7dba665f3</uuid><expression>{Speedtest Monitoring:speedtest.download.last()}&lt;50</expression>
                     <name>Download speed critically low (&lt;50 Mbps)</name>
                     <priority>HIGH</priority>
                     <description>Download speed has dropped critically below 50 Mbps. Current value: {ITEM.LASTVALUE} Mbps</description>
                 </trigger>
                 
-                <!-- Upload Speed Very Low -->
+                
                 <trigger>
-                    <expression>{Speedtest Monitoring:speedtest.upload.last()}&lt;5</expression>
+                    <uuid>9785653c-98c5-4cf5-819d-dc9ba4f9e4f5</uuid><expression>{Speedtest Monitoring:speedtest.upload.last()}&lt;5</expression>
                     <name>Upload speed critically low (&lt;5 Mbps)</name>
                     <priority>HIGH</priority>
                     <description>Upload speed has dropped critically below 5 Mbps. Current value: {ITEM.LASTVALUE} Mbps</description>
                 </trigger>
                 
-                <!-- Ping Very High -->
+                
                 <trigger>
-                    <expression>{Speedtest Monitoring:speedtest.ping.last()}&gt;200</expression>
+                    <uuid>bbfb6c84-aed3-4e29-bc20-a6127eb72a5e</uuid><expression>{Speedtest Monitoring:speedtest.ping.last()}&gt;200</expression>
                     <name>Ping/Latency critically high (&gt;200ms)</name>
                     <priority>HIGH</priority>
                     <description>Ping/Latency has exceeded 200ms. Current value: {ITEM.LASTVALUE} ms</description>
                 </trigger>
             </triggers>
             <graphs>
-                <!-- Download Speed Graph -->
+                
                 <graph>
-                    <name>Download Speed</name>
+                    <uuid>714127a0-4e7c-4085-80d4-751f3ad33deb</uuid><name>Download Speed</name>
                     <width>900</width>
                     <height>200</height>
                     <graph_items>
@@ -301,9 +301,9 @@
                     </graph_items>
                 </graph>
                 
-                <!-- Upload Speed Graph -->
+                
                 <graph>
-                    <name>Upload Speed</name>
+                    <uuid>98a5546d-0a63-49a3-8698-ea8d7ef0b64e</uuid><name>Upload Speed</name>
                     <width>900</width>
                     <height>200</height>
                     <graph_items>
@@ -332,9 +332,9 @@
                     </graph_items>
                 </graph>
                 
-                <!-- Ping/Latency Graph -->
+                
                 <graph>
-                    <name>Ping/Latency</name>
+                    <uuid>f5145e21-4e42-4aa9-873f-42f7a3321e47</uuid><name>Ping/Latency</name>
                     <width>900</width>
                     <height>200</height>
                     <graph_items>
@@ -363,9 +363,9 @@
                     </graph_items>
                 </graph>
                 
-                <!-- Combined Speed Graph -->
+                
                 <graph>
-                    <name>Speed Test Overview</name>
+                    <uuid>f3672f9e-66f6-4665-b39e-cd73352e97c3</uuid><name>Speed Test Overview</name>
                     <width>900</width>
                     <height>200</height>
                     <graph_items>
@@ -405,7 +405,5 @@
                     </graph_items>
                 </graph>
             </graphs>
-        </template>
-    </templates>
+        </template></templates>
 </zabbix_export>
-
