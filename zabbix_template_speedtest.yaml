@@ -1,0 +1,108 @@
+zabbix_export:
+  version: '7.2'
+  template_groups:
+  - uuid: 00000000-0000-0000-0000-000000000001
+    name: Templates
+  templates:
+  - uuid: 91ae8bb6-fc61-4f92-a701-bcaeb6d7f9ec
+    template: Speedtest Monitoring
+    name: Speedtest Monitoring
+    description: Template for monitoring internet speed test results via speedtest-cli.
+      Includes download speed, upload speed, ping/latency, 24-hour averages, test
+      statistics, and server information.
+    groups:
+    - name: Templates
+    items:
+    - uuid: 1d833744-d91f-4667-9c55-6b55ba795617
+      name: Download Speed (Latest)
+      type: ZABBIX_ACTIVE
+      key: speedtest.download
+      value_type: FLOAT
+      delay: 10m
+      history: 7d
+      trends: 365d
+      units: Mbps
+    - uuid: e24558af-bb71-4889-9a61-5da5a429c8c7
+      name: Upload Speed (Latest)
+      type: ZABBIX_ACTIVE
+      key: speedtest.upload
+      value_type: FLOAT
+      delay: 10m
+      history: 7d
+      trends: 365d
+      units: Mbps
+    - uuid: 444906f3-e73e-48e9-9d15-a0c375c53a29
+      name: Ping/Latency (Latest)
+      type: ZABBIX_ACTIVE
+      key: speedtest.ping
+      value_type: FLOAT
+      delay: 10m
+      history: 7d
+      trends: 365d
+      units: ms
+    - uuid: 3e9da59e-51fd-4a3f-9f04-3a857b8f4aca
+      name: Download Speed (24h Average)
+      type: ZABBIX_ACTIVE
+      key: speedtest.download_avg_24h
+      value_type: FLOAT
+      delay: 5m
+      history: 7d
+      trends: 365d
+      units: Mbps
+    - uuid: 0bd4d090-191c-4bfb-a5bf-708459c26969
+      name: Upload Speed (24h Average)
+      type: ZABBIX_ACTIVE
+      key: speedtest.upload_avg_24h
+      value_type: FLOAT
+      delay: 5m
+      history: 7d
+      trends: 365d
+      units: Mbps
+    - uuid: 89fa2406-0a09-4aea-a263-276d3279efd0
+      name: Ping/Latency (24h Average)
+      type: ZABBIX_ACTIVE
+      key: speedtest.ping_avg_24h
+      value_type: FLOAT
+      delay: 5m
+      history: 7d
+      trends: 365d
+      units: ms
+    - uuid: 47f61951-e8a3-4bd3-a89f-3f655124b360
+      name: Test Count (24h)
+      type: ZABBIX_ACTIVE
+      key: speedtest.test_count_24h
+      value_type: UINT64
+      delay: 5m
+      history: 7d
+      trends: 365d
+      units: tests
+    - uuid: 1c95ed5a-56a5-44e6-9da2-5a3459e50cb6
+      name: Last Test Time
+      type: ZABBIX_ACTIVE
+      key: speedtest.last_test_time
+      value_type: UINT64
+      delay: 10m
+      history: 7d
+      trends: 365d
+      units: unixtime
+    - uuid: 4d78eecc-32e4-4057-a805-cf53191cb242
+      name: Test Server Name
+      type: ZABBIX_ACTIVE
+      key: speedtest.server_name
+      value_type: TEXT
+      delay: 10m
+      history: 7d
+    - uuid: ce2794f5-6d06-4c9d-ba69-499ffdf1ae98
+      name: Test Server Location
+      type: ZABBIX_ACTIVE
+      key: speedtest.server_location
+      value_type: TEXT
+      delay: 10m
+      history: 7d
+    - uuid: 2b7e7952-7897-4c70-b928-2a9044c1cb6c
+      name: Test Server Country
+      type: ZABBIX_ACTIVE
+      key: speedtest.server_country
+      value_type: TEXT
+      delay: 10m
+      history: 7d
