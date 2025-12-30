@@ -71,7 +71,7 @@ zabbix_export:
       name: Test Count (24h)
       type: ZABBIX_ACTIVE
       key: speedtest.test_count_24h
-      value_type: UINT64
+      value_type: UNSIGNED
       delay: 5m
       history: 7d
       trends: 365d
@@ -80,7 +80,7 @@ zabbix_export:
       name: Last Test Time
       type: ZABBIX_ACTIVE
       key: speedtest.last_test_time
-      value_type: UINT64
+      value_type: UNSIGNED
       delay: 10m
       history: 7d
       trends: 365d
