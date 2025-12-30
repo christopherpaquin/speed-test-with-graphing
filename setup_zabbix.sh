@@ -11,7 +11,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$SCRIPT_DIR"
 
 # Zabbix configuration
-ZABBIX_CONF_DIR="/etc/zabbix/zabbix_agentd.conf.d"
+# Detect which agent is installed (agent or agent2)
+if [ -d "/etc/zabbix/zabbix_agent2.conf.d" ]; then
+    ZABBIX_CONF_DIR="/etc/zabbix/zabbix_agent2.conf.d"
+    ZABBIX_AGENT_TYPE="agent2"
+elif [ -d "/etc/zabbix/zabbix_agentd.conf.d" ]; then
+    ZABBIX_CONF_DIR="/etc/zabbix/zabbix_agentd.conf.d"
+    ZABBIX_AGENT_TYPE="agent"
+else
+    # Default to agentd if neither exists (will be created)
+    ZABBIX_CONF_DIR="/etc/zabbix/zabbix_agentd.conf.d"
+    ZABBIX_AGENT_TYPE="agent"
+fi
+
 ZABBIX_SCRIPT_DIR="/usr/local/bin"
 ZABBIX_CONF_FILE="$ZABBIX_CONF_DIR/speedtest.conf"
 ZABBIX_SCRIPT="$ZABBIX_SCRIPT_DIR/zbx-speedtest.py"
@@ -54,6 +66,59 @@ if [ ! -d "$ZABBIX_CONF_DIR" ]; then
     mkdir -p "$ZABBIX_CONF_DIR"
     chown root:root "$ZABBIX_CONF_DIR"
     chmod 755 "$ZABBIX_CONF_DIR"
+fi
+
+# Ensure main agent config includes .conf.d directory
+if [ "$ZABBIX_AGENT_TYPE" = "agent2" ]; then
+    MAIN_CONFIG="/etc/zabbix/zabbix_agent2.conf"
+    INCLUDE_DIRECTIVE="Include=/etc/zabbix/zabbix_agent2.conf.d/*.conf"
+else
+    MAIN_CONFIG="/etc/zabbix/zabbix_agentd.conf"
+    INCLUDE_DIRECTIVE="Include=/etc/zabbix/zabbix_agentd.conf.d/*.conf"
+fi
+
+if [ -f "$MAIN_CONFIG" ]; then
+    # Check if Include directive exists and is uncommented
+    if ! grep -q "^${INCLUDE_DIRECTIVE}$" "$MAIN_CONFIG" 2>/dev/null; then
+        log_info "Ensuring Include directive is present in $MAIN_CONFIG"
+        
+        # Check if it's commented out or pointing to wrong location
+        if grep -q "^#.*Include.*conf\.d" "$MAIN_CONFIG" 2>/dev/null || \
+           grep -q "Include.*\/usr\/local\/etc" "$MAIN_CONFIG" 2>/dev/null; then
+            log_warn "Found commented or incorrect Include directive in $MAIN_CONFIG"
+            log_info "Fixing Include directive..."
+            
+            # Create backup
+            cp "$MAIN_CONFIG" "${MAIN_CONFIG}.backup.$(date +%Y%m%d_%H%M%S)"
+            
+            # Remove old commented/wrong Include lines (use single quotes to avoid variable expansion issues)
+            sed -i '/^#.*Include.*conf\.d/d' "$MAIN_CONFIG"
+            sed -i '/Include.*\/usr\/local\/etc.*conf\.d/d' "$MAIN_CONFIG"
+            
+            # Remove duplicate correct Include lines if any (use | as delimiter to avoid / conflicts)
+            sed -i "\|^${INCLUDE_DIRECTIVE}$|d" "$MAIN_CONFIG"
+            
+            # Add correct Include directive at the end
+            log_info "Adding correct Include directive to $MAIN_CONFIG"
+            echo "" >> "$MAIN_CONFIG"
+            echo "# UserParameters directory (added by setup_zabbix.sh)" >> "$MAIN_CONFIG"
+            echo "$INCLUDE_DIRECTIVE" >> "$MAIN_CONFIG"
+            
+            log_info "✓ Include directive fixed in $MAIN_CONFIG"
+            log_info "Backup saved to: ${MAIN_CONFIG}.backup.*"
+        else
+            # Add Include directive if it doesn't exist
+            log_info "Adding Include directive to $MAIN_CONFIG"
+            echo "" >> "$MAIN_CONFIG"
+            echo "# UserParameters directory (added by setup_zabbix.sh)" >> "$MAIN_CONFIG"
+            echo "$INCLUDE_DIRECTIVE" >> "$MAIN_CONFIG"
+        fi
+    else
+        log_info "Include directive already present and correct in $MAIN_CONFIG"
+    fi
+else
+    log_warn "Main agent config file not found: $MAIN_CONFIG"
+    log_warn "You may need to manually add: $INCLUDE_DIRECTIVE"
 fi
 
 # Check if project script exists
@@ -110,27 +175,48 @@ else
 fi
 
 # Check if Zabbix agent service exists and restart it
-if systemctl list-unit-files | grep -q "zabbix-agent.service"; then
-    log_info "Restarting Zabbix agent to load new configuration..."
-    if systemctl restart zabbix-agent 2>/dev/null; then
-        log_info "Zabbix agent restarted successfully"
+log_info "Detected Zabbix agent type: $ZABBIX_AGENT_TYPE"
+
+if [ "$ZABBIX_AGENT_TYPE" = "agent2" ]; then
+    if systemctl list-unit-files | grep -q "zabbix-agent2.service"; then
+        log_info "Restarting Zabbix agent2 to load new configuration..."
+        if systemctl restart zabbix-agent2 2>/dev/null; then
+            log_info "Zabbix agent2 restarted successfully"
+        else
+            log_warn "Could not restart Zabbix agent2. You may need to restart it manually:"
+            log_warn "  sudo systemctl restart zabbix-agent2"
+        fi
     else
-        log_warn "Could not restart Zabbix agent. You may need to restart it manually:"
-        log_warn "  sudo systemctl restart zabbix-agent"
-    fi
-elif systemctl list-unit-files | grep -q "zabbix-agentd.service"; then
-    log_info "Restarting Zabbix agent daemon to load new configuration..."
-    if systemctl restart zabbix-agentd 2>/dev/null; then
-        log_info "Zabbix agent daemon restarted successfully"
-    else
-        log_warn "Could not restart Zabbix agent daemon. You may need to restart it manually:"
-        log_warn "  sudo systemctl restart zabbix-agentd"
+        log_warn "Zabbix agent2 service not found. Please restart it manually after setup."
     fi
 else
-    log_warn "Zabbix agent service not found. Please restart it manually after setup."
+    if systemctl list-unit-files | grep -q "zabbix-agent.service"; then
+        log_info "Restarting Zabbix agent to load new configuration..."
+        if systemctl restart zabbix-agent 2>/dev/null; then
+            log_info "Zabbix agent restarted successfully"
+        else
+            log_warn "Could not restart Zabbix agent. You may need to restart it manually:"
+            log_warn "  sudo systemctl restart zabbix-agent"
+        fi
+    elif systemctl list-unit-files | grep -q "zabbix-agentd.service"; then
+        log_info "Restarting Zabbix agent daemon to load new configuration..."
+        if systemctl restart zabbix-agentd 2>/dev/null; then
+            log_info "Zabbix agent daemon restarted successfully"
+        else
+            log_warn "Could not restart Zabbix agent daemon. You may need to restart it manually:"
+            log_warn "  sudo systemctl restart zabbix-agentd"
+        fi
+    else
+        log_warn "Zabbix agent service not found. Please restart it manually after setup."
+    fi
 fi
 
 log_info "Zabbix integration setup complete!"
+log_info ""
+log_info "Configuration details:"
+log_info "  Agent type: $ZABBIX_AGENT_TYPE"
+log_info "  Config file: $ZABBIX_CONF_FILE"
+log_info "  Script location: $ZABBIX_SCRIPT"
 log_info ""
 log_info "Available metrics:"
 log_info "  - speedtest.download (latest download speed in Mbps)"

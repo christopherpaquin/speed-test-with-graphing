@@ -230,6 +230,7 @@ sudo ./setup_mrtg.sh
 - 📦 Installs `zbx-speedtest.py` script to `/usr/local/bin/`
 - 🔒 Sets proper file permissions and ownership
 - 🔄 Restarts Zabbix agent to load new configuration
+- 🔧 Fixes agent config Include directives if needed
 - ✅ Tests the script to ensure it works correctly
 
 **When to use:**
@@ -571,6 +572,23 @@ Check that all components are properly installed:
 # Verify UserParameters config exists
 cat /etc/zabbix/zabbix_agentd.conf.d/speedtest.conf
 
+# Test agent config syntax (use -p flag, not -t)
+sudo zabbix_agentd -p -c /etc/zabbix/zabbix_agentd.conf
+```
+
+**Note:** If the agent fails to start after setup, use the fix script:
+```bash
+cd /opt/projects/speed-test-with-graphing
+sudo ./fix_zabbix_agent_config.sh
+```
+
+This script will:
+- Create a backup of the agent config
+- Test config syntax
+- Fix Include directive issues
+- Remove duplicate Include lines
+- Restart the agent
+
 # Verify script is installed
 ls -l /usr/local/bin/zbx-speedtest.py
 
@@ -636,6 +654,8 @@ After setup:
 **Zabbix agent can't collect metrics:**
 - Check agent logs: `sudo journalctl -u zabbix-agent -n 50`
 - Verify UserParameters config: `cat /etc/zabbix/zabbix_agentd.conf.d/speedtest.conf`
+- Test config syntax: `sudo zabbix_agentd -p -c /etc/zabbix/zabbix_agentd.conf`
+- If agent fails to start: `sudo ./fix_zabbix_agent_config.sh`
 - Restart agent: `sudo systemctl restart zabbix-agent`
 - Check script permissions: `ls -l /usr/local/bin/zbx-speedtest.py`
 
