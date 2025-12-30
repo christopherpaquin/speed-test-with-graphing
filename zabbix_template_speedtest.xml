@@ -19,20 +19,6 @@
                     <name>Templates</name>
                 </group>
             </groups>
-            <applications>
-                <application>
-                    <name>Speedtest - Latest Values</name>
-                </application>
-                <application>
-                    <name>Speedtest - 24h Averages</name>
-                </application>
-                <application>
-                    <name>Speedtest - Statistics</name>
-                </application>
-                <application>
-                    <name>Speedtest - Server Info</name>
-                </application>
-            </applications>
             <items>
                 <!-- Latest Download Speed -->
                 <item>
