@@ -43,6 +43,14 @@ bash "$SCRIPT_DIR/setup_cron.sh"
 log_section "Step 3: Setting up MRTG update cron job"
 bash "$SCRIPT_DIR/setup_mrtg_cron.sh"
 
+# Step 4: Setup Zabbix integration (optional)
+log_section "Step 4: Setting up Zabbix integration"
+if bash "$SCRIPT_DIR/setup_zabbix.sh"; then
+    log_info "Zabbix integration configured successfully"
+else
+    log_warn "Zabbix integration setup had issues (this is OK if Zabbix is not installed)"
+fi
+
 log_section "Setup Complete!"
 log_info "All components have been set up successfully."
 log_info ""

@@ -13,6 +13,7 @@
 - ⚡ **Speed Testing**: Test download speed, upload speed, and ping/latency
 - 📊 **Data Logging**: Save all test results to JSON for historical tracking
 - 📈 **MRTG Graphing**: Generate beautiful graphs using MRTG served via Apache
+- 📡 **Zabbix Integration**: Export metrics to Zabbix for enterprise monitoring
 - 🤖 **Automated Testing**: Cron job runs speed tests at configurable intervals
 - 🔄 **Automated Graphing**: Cron job updates MRTG graphs at configurable intervals
 - 🔒 **Idempotent Setup**: All setup scripts can be run multiple times safely
@@ -26,6 +27,7 @@
 - [Installation](#-installation)
 - [Setup Scripts](#-setup-scripts)
 - [Core Scripts](#-core-scripts)
+- [Zabbix Integration](#-zabbix-integration)
 - [Usage](#-usage)
 - [Project Structure](#-project-structure)
 - [Data Format](#-data-format)
@@ -84,6 +86,7 @@ This will automatically:
 - ✅ Configure firewall to allow traffic
 - ✅ Create cron jobs for automated testing and graph updates
 - ✅ Initialize MRTG log files with initial data points
+- ✅ Set up Zabbix integration (if Zabbix agent is installed)
 
 ---
 
@@ -219,6 +222,49 @@ sudo ./setup_mrtg.sh
 
 ---
 
+### 📡 `setup_zabbix.sh` - Zabbix Integration Setup
+
+**What it does:**
+- 📝 Creates UserParameters config file in `/etc/zabbix/zabbix_agentd.conf.d/speedtest.conf`
+- 📋 Defines 11 UserParameters for speedtest metrics
+- 📦 Installs `zbx-speedtest.py` script to `/usr/local/bin/`
+- 🔒 Sets proper file permissions and ownership
+- 🔄 Restarts Zabbix agent to load new configuration
+- ✅ Tests the script to ensure it works correctly
+
+**When to use:**
+- Setting up Zabbix monitoring for speedtest metrics
+- After installing Zabbix agent on the system
+- Reconfiguring Zabbix integration
+- When Zabbix metrics are not being collected
+
+**Usage:**
+```bash
+sudo ./setup_zabbix.sh
+```
+
+**Post-setup:**
+- UserParameters config file is created and active
+- Zabbix script is installed and executable
+- Zabbix agent has been restarted (if service exists)
+- All 11 metrics are available for collection
+- Ready to configure items in Zabbix server
+
+**Available UserParameters:**
+- `speedtest.download` - Latest download speed
+- `speedtest.upload` - Latest upload speed
+- `speedtest.ping` - Latest ping/latency
+- `speedtest.download_avg_24h` - 24-hour average download
+- `speedtest.upload_avg_24h` - 24-hour average upload
+- `speedtest.ping_avg_24h` - 24-hour average ping
+- `speedtest.test_count_24h` - Number of tests in last 24h
+- `speedtest.last_test_time` - Unix timestamp of last test
+- `speedtest.server_name` - Name of last test server
+- `speedtest.server_location` - Location of last test server
+- `speedtest.server_country` - Country of last test server
+
+---
+
 ## 🐍 Core Scripts
 
 ### 🏃 `speedtest_runner.py` - Speed Test Execution
@@ -299,6 +345,303 @@ Average Download  # System name
 - MRTG reads this output to update graphs
 - Graphs reflect the calculated averages
 - Data is stored in MRTG log files
+
+---
+
+### 📡 `zbx-speedtest.py` - Zabbix Data Provider
+
+**What it does:**
+- 📖 Reads speed test results from `speedtest_results.json`
+- 🔢 Returns individual metrics for Zabbix monitoring
+- 📊 Calculates averages and statistics on demand
+- ⏰ Filters results by time windows (24 hours)
+- 🎯 Supports 11 different metrics for comprehensive monitoring
+
+**When to use:**
+- Called automatically by Zabbix agent (via UserParameters)
+- Testing Zabbix integration
+- Debugging metric collection
+- Manual verification of metric values
+
+**Usage:**
+```bash
+# Test individual metrics
+/usr/local/bin/zbx-speedtest.py speedtest.download
+/usr/local/bin/zbx-speedtest.py speedtest.upload
+/usr/local/bin/zbx-speedtest.py speedtest.ping
+/usr/local/bin/zbx-speedtest.py speedtest.download_avg_24h
+/usr/local/bin/zbx-speedtest.py speedtest.test_count_24h
+```
+
+**Available Metrics:**
+- `speedtest.download` - Latest download speed (Mbps)
+- `speedtest.upload` - Latest upload speed (Mbps)
+- `speedtest.ping` - Latest ping/latency (ms)
+- `speedtest.download_avg_24h` - 24-hour average download (Mbps)
+- `speedtest.upload_avg_24h` - 24-hour average upload (Mbps)
+- `speedtest.ping_avg_24h` - 24-hour average ping (ms)
+- `speedtest.test_count_24h` - Number of tests in last 24 hours
+- `speedtest.last_test_time` - Unix timestamp of last test
+- `speedtest.server_name` - Name of last test server
+- `speedtest.server_location` - Location of last test server
+- `speedtest.server_country` - Country of last test server
+
+**Post-execution:**
+- Zabbix agent reads this output to collect metrics
+- Metrics are sent to Zabbix server for monitoring
+- Can be used in triggers, graphs, and dashboards
+
+---
+
+## 📡 Zabbix Integration
+
+This project includes full Zabbix integration for enterprise monitoring of speed test metrics.
+
+### 🎯 Overview
+
+The Zabbix integration provides 11 UserParameters that expose speedtest metrics to your Zabbix server. This allows you to:
+- 📊 Create graphs and dashboards in Zabbix
+- 🚨 Set up triggers for speed anomalies
+- 📈 Track historical trends over time
+- 🔔 Get alerts when speeds drop below thresholds
+
+### 📦 Installation
+
+#### Prerequisites
+
+- Zabbix agent must be installed and running on the host
+- Speed test data must exist (run `python3 speedtest_runner.py` at least once)
+- Root/sudo access required for installation
+
+#### Installation Methods
+
+**Method 1: Automatic Setup (Recommended)**
+
+The Zabbix integration is automatically configured when you run the master setup script:
+```bash
+sudo ./setup_all.sh
+```
+
+This will set up MRTG, Apache, cron jobs, and Zabbix integration all at once.
+
+**Method 2: Manual Setup**
+
+If you want to set up Zabbix integration separately or only need Zabbix:
+```bash
+sudo ./setup_zabbix.sh
+```
+
+#### What Gets Installed
+
+The setup script performs the following actions:
+
+1. **Creates UserParameters Configuration:**
+   - **Location:** `/etc/zabbix/zabbix_agentd.conf.d/speedtest.conf`
+   - **Contents:** 11 UserParameter definitions
+   - **Permissions:** `root:root`, `644`
+
+2. **Installs Zabbix Script:**
+   - **Source:** `./zbx-speedtest.py` (project directory)
+   - **Destination:** `/usr/local/bin/zbx-speedtest.py`
+   - **Permissions:** `root:root`, `755` (executable)
+   - **Purpose:** Provides metric data to Zabbix agent
+
+3. **Restarts Zabbix Agent:**
+   - Automatically restarts `zabbix-agent` or `zabbix-agentd` service
+   - Loads new UserParameters configuration
+   - Verifies agent is running
+
+4. **Verifies Installation:**
+   - Tests script execution
+   - Checks file permissions
+   - Validates configuration
+
+#### Installation Locations Summary
+
+| Component | Location | Description |
+|-----------|----------|-------------|
+| **UserParameters Config** | `/etc/zabbix/zabbix_agentd.conf.d/speedtest.conf` | Zabbix agent configuration file |
+| **Zabbix Script** | `/usr/local/bin/zbx-speedtest.py` | Executable script for metric collection |
+| **Source Script** | `/opt/projects/speed-test-with-graphing/zbx-speedtest.py` | Original script in project directory |
+| **Speedtest Data** | `/opt/projects/speed-test-with-graphing/speedtest_results.json` | JSON file with test results |
+
+### 📊 Available Metrics
+
+| Metric | Description | Unit | Example |
+|--------|-------------|------|---------|
+| `speedtest.download` | Latest download speed | Mbps | `445.79` |
+| `speedtest.upload` | Latest upload speed | Mbps | `55.83` |
+| `speedtest.ping` | Latest ping/latency | ms | `30.2` |
+| `speedtest.download_avg_24h` | 24-hour average download | Mbps | `473.5` |
+| `speedtest.upload_avg_24h` | 24-hour average upload | Mbps | `49.2` |
+| `speedtest.ping_avg_24h` | 24-hour average ping | ms | `28.5` |
+| `speedtest.test_count_24h` | Number of tests in last 24h | count | `144` |
+| `speedtest.last_test_time` | Unix timestamp of last test | timestamp | `1703941708` |
+| `speedtest.server_name` | Name of last test server | string | `"Lyons, GA"` |
+| `speedtest.server_location` | Location of last test server | string | `"Unknown"` |
+| `speedtest.server_country` | Country of last test server | string | `"United States"` |
+
+### 🧪 Testing the Integration
+
+#### Test 1: Test Script from Project Directory (Before Setup)
+
+Before running setup, test the script from the project directory:
+```bash
+cd /opt/projects/speed-test-with-graphing
+python3 zbx-speedtest.py speedtest.download
+python3 zbx-speedtest.py speedtest.upload
+python3 zbx-speedtest.py speedtest.ping
+```
+
+**Expected Output:**
+```
+393.62    # Download speed in Mbps
+41.33     # Upload speed in Mbps
+26.01     # Ping in milliseconds
+```
+
+> ⚠️ **Note:** If you see `0`, it means no speedtest data exists yet. Run `python3 speedtest_runner.py` first.
+
+#### Test 2: Test All Metrics at Once
+
+Use the provided test script to test all 11 metrics:
+```bash
+cd /opt/projects/speed-test-with-graphing
+./test_zabbix_metrics.sh
+```
+
+This will display all metrics with their current values.
+
+#### Test 3: Test from Installed Location (After Setup)
+
+After running `sudo ./setup_zabbix.sh`, test from the installed location:
+```bash
+# Test individual metrics
+/usr/local/bin/zbx-speedtest.py speedtest.download
+/usr/local/bin/zbx-speedtest.py speedtest.upload
+/usr/local/bin/zbx-speedtest.py speedtest.ping
+/usr/local/bin/zbx-speedtest.py speedtest.download_avg_24h
+/usr/local/bin/zbx-speedtest.py speedtest.upload_avg_24h
+/usr/local/bin/zbx-speedtest.py speedtest.ping_avg_24h
+/usr/local/bin/zbx-speedtest.py speedtest.test_count_24h
+/usr/local/bin/zbx-speedtest.py speedtest.last_test_time
+/usr/local/bin/zbx-speedtest.py speedtest.server_name
+/usr/local/bin/zbx-speedtest.py speedtest.server_location
+/usr/local/bin/zbx-speedtest.py speedtest.server_country
+```
+
+**Expected Outputs:**
+- **Numeric metrics:** Decimal numbers or integers (e.g., `393.62`, `41.33`, `3`, `1767120005`)
+- **Text metrics:** Strings (e.g., `"Thomasville, GA"`, `"United States"`)
+
+#### Test 4: Test as Zabbix User (Important!)
+
+This is critical - Zabbix agent runs as the `zabbix` user, so test with that user:
+```bash
+sudo -u zabbix /usr/local/bin/zbx-speedtest.py speedtest.download
+```
+
+**Expected:** Should return the same value as when run as root (e.g., `393.62`)
+
+> ⚠️ **If this returns `0`:** The script may be outdated. Re-run `sudo ./setup_zabbix.sh` to update it.
+
+#### Test 5: Test from Zabbix Server
+
+From your Zabbix server, use `zabbix_get` to test the agent connection:
+```bash
+# Replace <hostname> with your monitored host's hostname or IP
+zabbix_get -s <hostname> -k speedtest.download
+zabbix_get -s <hostname> -k speedtest.upload
+zabbix_get -s <hostname> -k speedtest.ping
+zabbix_get -s <hostname> -k speedtest.download_avg_24h
+```
+
+**Expected Output:**
+```
+393.62
+41.33
+26.01
+446.83
+```
+
+#### Test 6: Verify Configuration
+
+Check that all components are properly installed:
+```bash
+# Verify UserParameters config exists
+cat /etc/zabbix/zabbix_agentd.conf.d/speedtest.conf
+
+# Verify script is installed
+ls -l /usr/local/bin/zbx-speedtest.py
+
+# Check Zabbix agent status
+sudo systemctl status zabbix-agent
+
+# Check Zabbix agent logs for errors
+sudo journalctl -u zabbix-agent -n 50 | grep -i speedtest
+```
+
+**Expected:**
+- Config file should show 11 `UserParameter=` lines
+- Script should be executable (`-rwxr-xr-x`)
+- Agent should be running
+- No errors in logs
+
+### 📈 Zabbix Configuration
+
+**1. Add Items in Zabbix:**
+- Go to Configuration → Hosts → Your Host → Items
+- Click "Create item"
+- Use the metric names (e.g., `speedtest.download`)
+- Set appropriate update interval (e.g., 10 minutes to match speedtest interval)
+- Configure value types (Numeric for speeds/ping, Text for server info)
+
+**2. Create Graphs:**
+- Go to Configuration → Hosts → Your Host → Graphs
+- Create graphs for download, upload, and ping speeds
+- Add items for latest values and 24-hour averages
+
+**3. Set Up Triggers:**
+Example triggers:
+- Download speed below 100 Mbps: `{speedtest.download}<100`
+- Upload speed below 10 Mbps: `{speedtest.upload}<10`
+- Ping above 100ms: `{speedtest.ping}>100`
+- No tests in last 2 hours: `{speedtest.test_count_24h}<12`
+
+**4. Create Dashboards:**
+- Combine graphs, latest values, and server information
+- Add widgets for real-time monitoring
+
+### 🔄 Post-Setup
+
+After setup:
+- ✅ UserParameters are active and ready to use
+- ✅ Zabbix agent has been restarted (if service exists)
+- ✅ Script is installed and executable
+- ✅ Configuration file is in place
+
+**Next Steps:**
+1. Verify metrics are being collected in Zabbix
+2. Create items for the metrics you want to monitor
+3. Set up graphs and dashboards
+4. Configure triggers for alerts
+
+### 🐛 Troubleshooting
+
+**Metric returns 0 or empty:**
+- Check if speedtest data exists: `cat speedtest_results.json`
+- Verify script path: `ls -l /usr/local/bin/zbx-speedtest.py`
+- Test script manually: `/usr/local/bin/zbx-speedtest.py speedtest.download`
+
+**Zabbix agent can't collect metrics:**
+- Check agent logs: `sudo journalctl -u zabbix-agent -n 50`
+- Verify UserParameters config: `cat /etc/zabbix/zabbix_agentd.conf.d/speedtest.conf`
+- Restart agent: `sudo systemctl restart zabbix-agent`
+- Check script permissions: `ls -l /usr/local/bin/zbx-speedtest.py`
+
+**Script not found:**
+- Re-run setup: `sudo ./setup_zabbix.sh`
+- Verify script exists: `ls -l /usr/local/bin/zbx-speedtest.py`
 
 ---
 
@@ -384,6 +727,7 @@ Average Download  # Metric name
 speed-test-with-graphing/
 ├── 📄 speedtest_runner.py      # Runs speed tests and saves to JSON
 ├── 📄 mrtg_speedtest.py         # Outputs speedtest data in MRTG format
+├── 📄 zbx-speedtest.py          # Outputs speedtest data for Zabbix
 ├── 📄 requirements.txt          # Python dependencies
 ├── 📄 vars.example              # Configuration template (committed to git)
 ├── 📄 vars                      # Your configuration (ignored by git)
@@ -392,6 +736,7 @@ speed-test-with-graphing/
 ├── 🔧 setup_mrtg.sh             # Sets up MRTG and Apache
 ├── 🔧 setup_cron.sh             # Sets up speedtest cron job
 ├── 🔧 setup_mrtg_cron.sh        # Sets up MRTG update cron job
+├── 🔧 setup_zabbix.sh            # Sets up Zabbix integration
 │
 ├── 📊 speedtest_results.json     # All test results (ignored by git)
 ├── 📋 speedtest_cron.log        # Speedtest execution logs
