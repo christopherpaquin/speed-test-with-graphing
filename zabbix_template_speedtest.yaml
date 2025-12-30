@@ -1,108 +1,109 @@
 zabbix_export:
   version: '7.2'
   template_groups:
-  - uuid: null
-    name: Templates
+    - uuid: '4f619b023f4640989712a36d7f8c14e0'
+      name: Templates
   templates:
-  - uuid: null
-    template: Speedtest Monitoring
-    name: Speedtest Monitoring
-    description: Template for monitoring internet speed test results via speedtest-cli.
-      Includes download speed, upload speed, ping/latency, 24-hour averages, test
-      statistics, and server information.
-    groups:
-    - name: Templates
-    items:
-    - uuid: null
-      name: Download Speed (Latest)
-      type: ZABBIX_ACTIVE
-      key: speedtest.download
-      value_type: FLOAT
-      delay: 10m
-      history: 7d
-      trends: 365d
-      units: Mbps
-    - uuid: null
-      name: Upload Speed (Latest)
-      type: ZABBIX_ACTIVE
-      key: speedtest.upload
-      value_type: FLOAT
-      delay: 10m
-      history: 7d
-      trends: 365d
-      units: Mbps
-    - uuid: null
-      name: Ping/Latency (Latest)
-      type: ZABBIX_ACTIVE
-      key: speedtest.ping
-      value_type: FLOAT
-      delay: 10m
-      history: 7d
-      trends: 365d
-      units: ms
-    - uuid: null
-      name: Download Speed (24h Average)
-      type: ZABBIX_ACTIVE
-      key: speedtest.download_avg_24h
-      value_type: FLOAT
-      delay: 5m
-      history: 7d
-      trends: 365d
-      units: Mbps
-    - uuid: null
-      name: Upload Speed (24h Average)
-      type: ZABBIX_ACTIVE
-      key: speedtest.upload_avg_24h
-      value_type: FLOAT
-      delay: 5m
-      history: 7d
-      trends: 365d
-      units: Mbps
-    - uuid: null
-      name: Ping/Latency (24h Average)
-      type: ZABBIX_ACTIVE
-      key: speedtest.ping_avg_24h
-      value_type: FLOAT
-      delay: 5m
-      history: 7d
-      trends: 365d
-      units: ms
-    - uuid: null
-      name: Test Count (24h)
-      type: ZABBIX_ACTIVE
-      key: speedtest.test_count_24h
-      value_type: UNSIGNED
-      delay: 5m
-      history: 7d
-      trends: 365d
-      units: tests
-    - uuid: null
-      name: Last Test Time
-      type: ZABBIX_ACTIVE
-      key: speedtest.last_test_time
-      value_type: UNSIGNED
-      delay: 10m
-      history: 7d
-      trends: 365d
-      units: unixtime
-    - uuid: null
-      name: Test Server Name
-      type: ZABBIX_ACTIVE
-      key: speedtest.server_name
-      value_type: TEXT
-      delay: 10m
-      history: 7d
-    - uuid: null
-      name: Test Server Location
-      type: ZABBIX_ACTIVE
-      key: speedtest.server_location
-      value_type: TEXT
-      delay: 10m
-      history: 7d
-    - uuid: null
-      name: Test Server Country
-      type: ZABBIX_ACTIVE
-      key: speedtest.server_country
-      value_type: TEXT
-      delay: 10m
-      history: 7d
+    - uuid: '91ae8bb6fc614f92a701bcaeb6d7f9ec'
+      template: 'Speedtest Monitoring'
+      name: 'Speedtest Monitoring'
+      description: |
+        Template for monitoring internet speed test results via speedtest-cli.
+        Includes download speed, upload speed, ping/latency, 24-hour averages, test
+        statistics, and server information.
+      groups:
+        - name: Templates
+      items:
+        - uuid: '1d833744d91f46679c556b55ba795617'
+          name: 'Download Speed (Latest)'
+          type: ZABBIX_ACTIVE
+          key: speedtest.download
+          value_type: FLOAT
+          delay: 10m
+          history: 7d
+          trends: 365d
+          units: Mbps
+        - uuid: 'e24558afbb7148899a615da5a429c8c7'
+          name: 'Upload Speed (Latest)'
+          type: ZABBIX_ACTIVE
+          key: speedtest.upload
+          value_type: FLOAT
+          delay: 10m
+          history: 7d
+          trends: 365d
+          units: Mbps
+        - uuid: '444906f3e73e48e99d15a0c375c53a29'
+          name: 'Ping/Latency (Latest)'
+          type: ZABBIX_ACTIVE
+          key: speedtest.ping
+          value_type: FLOAT
+          delay: 10m
+          history: 7d
+          trends: 365d
+          units: ms
+        - uuid: '3e9da59e51fd4a3f9f043a857b8f4aca'
+          name: 'Download Speed (24h Average)'
+          type: ZABBIX_ACTIVE
+          key: speedtest.download_avg_24h
+          value_type: FLOAT
+          delay: 5m
+          history: 7d
+          trends: 365d
+          units: Mbps
+        - uuid: '0bd4d090191c4bfba5bf708459c26969'
+          name: 'Upload Speed (24h Average)'
+          type: ZABBIX_ACTIVE
+          key: speedtest.upload_avg_24h
+          value_type: FLOAT
+          delay: 5m
+          history: 7d
+          trends: 365d
+          units: Mbps
+        - uuid: '89fa24060a094aeaa263276d3279efd0'
+          name: 'Ping/Latency (24h Average)'
+          type: ZABBIX_ACTIVE
+          key: speedtest.ping_avg_24h
+          value_type: FLOAT
+          delay: 5m
+          history: 7d
+          trends: 365d
+          units: ms
+        - uuid: '47f61951e8a34bd3a89f3f655124b360'
+          name: 'Test Count (24h)'
+          type: ZABBIX_ACTIVE
+          key: speedtest.test_count_24h
+          value_type: UNSIGNED
+          delay: 5m
+          history: 7d
+          trends: 365d
+          units: tests
+        - uuid: '1c95ed5a56a544e69da25a3459e50cb6'
+          name: 'Last Test Time'
+          type: ZABBIX_ACTIVE
+          key: speedtest.last_test_time
+          value_type: UNSIGNED
+          delay: 10m
+          history: 7d
+          trends: 365d
+          units: unixtime
+        - uuid: '4d78eecc32e44057a805cf53191cb242'
+          name: 'Test Server Name'
+          type: ZABBIX_ACTIVE
+          key: speedtest.server_name
+          value_type: TEXT
+          delay: 10m
+          history: 7d
+        - uuid: 'ce2794f56d064c9dba69499ffdf1ae98'
+          name: 'Test Server Location'
+          type: ZABBIX_ACTIVE
+          key: speedtest.server_location
+          value_type: TEXT
+          delay: 10m
+          history: 7d
+        - uuid: '2b7e795278974c70b9282a9044c1cb6c'
+          name: 'Test Server Country'
+          type: ZABBIX_ACTIVE
+          key: speedtest.server_country
+          value_type: TEXT
+          delay: 10m
+          history: 7d
