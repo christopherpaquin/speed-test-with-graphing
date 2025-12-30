@@ -14,9 +14,6 @@ SPEEDTEST_INTERVAL="10"
 MRTG_UPDATE_INTERVAL="5"
 
 # Zabbix configuration
-# Zabbix server IP address (where Zabbix server is running)
-ZABBIX_SERVER_IP="YOUR_ZABBIX_SERVER_IP"
-
 # Monitored host IP address (this host's IP address for Zabbix monitoring)
 MONITORED_HOST_IP="YOUR_MONITORED_HOST_IP"
 
