@@ -6,7 +6,7 @@ Speed Test Runner - Performs internet speed tests and logs results
 import speedtest
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Optional
 
 
@@ -34,7 +34,7 @@ class SpeedTestRunner:
         results = self.st.results.dict()
         
         test_result = {
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "download_mbps": round(download_speed, 2),
             "upload_mbps": round(upload_speed, 2),
             "ping_ms": round(results.get("ping", 0), 2),

@@ -8,7 +8,7 @@ This script calculates averages from JSON results for MRTG graphing
 import json
 import os
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Optional
 
 
@@ -43,13 +43,25 @@ class MRTGSpeedTest:
         if not results:
             return 0.0
         
-        # Filter results from last N hours
-        cutoff_time = datetime.now() - timedelta(hours=hours)
+        # Filter results from last N hours (using UTC)
+        cutoff_time = datetime.now(timezone.utc) - timedelta(hours=hours)
         recent_results = []
         
         for result in results:
             try:
-                timestamp = datetime.fromisoformat(result['timestamp'])
+                # Parse timestamp - handle both timezone-aware and naive timestamps
+                ts_str = result['timestamp']
+                if 'Z' in ts_str or '+' in ts_str or (ts_str.count('-') > 2 and ('+' in ts_str or ts_str.endswith('Z'))):
+                    # Timezone-aware timestamp (has Z or timezone offset)
+                    timestamp = datetime.fromisoformat(ts_str.replace('Z', '+00:00'))
+                else:
+                    # Naive timestamp - assume local timezone (for backward compatibility with old data)
+                    # then convert to UTC for consistent comparison
+                    naive_dt = datetime.fromisoformat(ts_str)
+                    # Assume naive timestamps are in local timezone, convert to UTC
+                    local_tz = datetime.now().astimezone().tzinfo
+                    timestamp = naive_dt.replace(tzinfo=local_tz).astimezone(timezone.utc)
+                
                 if timestamp >= cutoff_time:
                     recent_results.append(result.get(metric, 0))
             except (KeyError, ValueError):

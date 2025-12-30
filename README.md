@@ -800,11 +800,16 @@ Results are stored in JSON format with the following structure:
 ```
 
 **Fields:**
-- `timestamp`: ISO 8601 format timestamp
+- `timestamp`: ISO 8601 format timestamp (UTC timezone-aware format, e.g., `2025-12-30T22:10:21+00:00`)
 - `download_mbps`: Download speed in Megabits per second
 - `upload_mbps`: Upload speed in Megabits per second
 - `ping_ms`: Latency in milliseconds
 - `server`: Information about the test server used
+
+**Note on Timestamps:**
+- New tests store timestamps in UTC format with timezone information (`+00:00`)
+- Old tests may have naive timestamps (without timezone) - these are automatically converted to UTC when read
+- This ensures consistent time display across MRTG and Zabbix regardless of server timezone
 
 ---
 
@@ -976,6 +981,17 @@ ls -laZ mrtg/html/  # SELinux context
 ```bash
 sudo ./setup_all.sh
 ```
+
+### 📊 Check Zabbix agent status and last check time:
+```bash
+./check_zabbix_last_check.sh
+```
+
+This script shows:
+- Zabbix agent running status
+- Last log activity
+- Recent errors/warnings
+- Instructions for checking when Zabbix server last collected data
 
 ---
 
