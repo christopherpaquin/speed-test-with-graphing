@@ -14,12 +14,6 @@
             <template>Speedtest Monitoring</template>
             <name>Speedtest Monitoring</name>
             <description>Template for monitoring internet speed test results via speedtest-cli. Includes download speed, upload speed, ping/latency, 24-hour averages, test statistics, and server information.</description>
-            <groups>
-                <group>
-                    <uuid>00000000-0000-0000-0000-000000000001</uuid>
-                    <name>Templates</name>
-                </group>
-            </groups>
             <items>
                 
                 <item>
@@ -213,6 +207,6 @@
                     <update_interval>10m</update_interval>
                 </item>
             </items>
-            </template>
+            <groups><group><name>Templates</name></group></groups></template>
     </templates>
 </zabbix_export>
