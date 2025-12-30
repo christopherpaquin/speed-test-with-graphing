@@ -314,6 +314,32 @@ zabbix_get -s <hostname> -k speedtest.download_avg_24h
 3. Ensure trigger dependencies are met
 4. Check trigger status (may be disabled)
 
+### Timezone Display Issue
+
+**Problem:** Zabbix shows incorrect time for `speedtest.last_test_time` (e.g., shows 11:50 PM instead of 5:10 PM)
+
+**Root Cause:** The Unix timestamp value is correct, but Zabbix web interface is displaying it in the wrong timezone.
+
+**Solution:**
+1. Log into Zabbix Web Interface
+2. Click on your username (top right corner) → **User settings**
+3. Go to **Profile** tab
+4. Find **Time zone** dropdown
+5. Set it to your local timezone (e.g., `America/New_York` for EST/EDT)
+6. Click **Update**
+
+**Note:** Unix timestamps are always stored in UTC. The timezone setting only affects how Zabbix displays them in the web interface. The actual data value is correct.
+
+**To verify the timestamp is correct:**
+```bash
+# On monitored host
+python3 zbx-speedtest.py speedtest.last_test_time
+# This returns Unix timestamp (e.g., 1767132621)
+
+# Convert to readable time
+date -d @1767132621  # Shows correct local time
+```
+
 ---
 
 ## 📚 Support
