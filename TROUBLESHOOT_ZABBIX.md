@@ -22,10 +22,12 @@ The UserParameters must be configured on the **monitored host** (where the Zabbi
 
 ### Step 1: Verify Setup on Monitored Host
 
-**SSH to the monitored host (10.1.10.53):**
+**SSH to the monitored host:**
 ```bash
-ssh root@10.1.10.53
+ssh root@<MONITORED_HOST_IP>
 ```
+
+> 💡 **Note:** Replace `<MONITORED_HOST_IP>` with your monitored host's IP address (configured in the `vars` file as `MONITORED_HOST_IP`).
 
 ### Step 2: Check UserParameters Config File
 
@@ -130,7 +132,7 @@ sudo journalctl -u zabbix-agent2 -n 50 | grep -i speedtest
 
 ### Step 8: Test from Monitored Host
 
-**On the monitored host (10.1.10.53), test locally:**
+**On the monitored host, test locally:**
 ```bash
 # Test script
 /usr/local/bin/zbx-speedtest.py speedtest.download
@@ -149,11 +151,13 @@ sudo -u zabbix /usr/local/bin/zbx-speedtest.py speedtest.download
 **From Zabbix server (in container):**
 ```bash
 # Test connection
-podman exec -it zabbix-server-pgsql zabbix_get -s 10.1.10.53 -k agent.ping
+podman exec -it zabbix-server-pgsql zabbix_get -s <MONITORED_HOST_IP> -k agent.ping
 
 # Test speedtest metric
-podman exec -it zabbix-server-pgsql zabbix_get -s 10.1.10.53 -k speedtest.download
+podman exec -it zabbix-server-pgsql zabbix_get -s <MONITORED_HOST_IP> -k speedtest.download
 ```
+
+> 💡 **Note:** Replace `<MONITORED_HOST_IP>` with your monitored host's IP address (configured in the `vars` file as `MONITORED_HOST_IP`).
 
 **If agent.ping works but speedtest.download doesn't:**
 - UserParameters are not configured or not loaded
@@ -161,7 +165,7 @@ podman exec -it zabbix-server-pgsql zabbix_get -s 10.1.10.53 -k speedtest.downlo
 
 ## Quick Fix Checklist
 
-Run these commands on the **monitored host (10.1.10.53)**:
+Run these commands on the **monitored host**:
 
 ```bash
 # 1. Verify setup script exists
@@ -263,11 +267,13 @@ After fixing, verify from Zabbix server:
 
 ```bash
 # From Zabbix server container
-podman exec -it zabbix-server-pgsql zabbix_get -s 10.1.10.53 -k agent.ping
-podman exec -it zabbix-server-pgsql zabbix_get -s 10.1.10.53 -k speedtest.download
-podman exec -it zabbix-server-pgsql zabbix_get -s 10.1.10.53 -k speedtest.upload
-podman exec -it zabbix-server-pgsql zabbix_get -s 10.1.10.53 -k speedtest.ping
+podman exec -it zabbix-server-pgsql zabbix_get -s <MONITORED_HOST_IP> -k agent.ping
+podman exec -it zabbix-server-pgsql zabbix_get -s <MONITORED_HOST_IP> -k speedtest.download
+podman exec -it zabbix-server-pgsql zabbix_get -s <MONITORED_HOST_IP> -k speedtest.upload
+podman exec -it zabbix-server-pgsql zabbix_get -s <MONITORED_HOST_IP> -k speedtest.ping
 ```
+
+> 💡 **Note:** Replace `<MONITORED_HOST_IP>` with your monitored host's IP address (configured in the `vars` file as `MONITORED_HOST_IP`).
 
 **Expected:**
 - `agent.ping` should return `1`
@@ -302,8 +308,10 @@ podman exec -it zabbix-server-pgsql zabbix_get -s 10.1.10.53 -k speedtest.ping
 4. **Verify network connectivity:**
    ```bash
    # From Zabbix server
-   podman exec -it zabbix-server-pgsql telnet 10.1.10.53 10050
+   podman exec -it zabbix-server-pgsql telnet <MONITORED_HOST_IP> 10050
    ```
+   
+   > 💡 **Note:** Replace `<MONITORED_HOST_IP>` with your monitored host's IP address (configured in the `vars` file as `MONITORED_HOST_IP`).
 
 ---
 

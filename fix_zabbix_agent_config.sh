@@ -6,6 +6,15 @@
 
 # Don't use set -e, we'll handle errors explicitly
 
+# Source vars file if it exists
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SCRIPT_DIR/vars" ]; then
+    source "$SCRIPT_DIR/vars"
+fi
+
+# Default values if not set in vars
+MONITORED_HOST_IP="${MONITORED_HOST_IP:-YOUR_MONITORED_HOST_IP}"
+
 MAIN_CONFIG="/etc/zabbix/zabbix_agentd.conf"
 BACKUP_FILE="${MAIN_CONFIG}.backup.$(date +%Y%m%d_%H%M%S)"
 
@@ -97,5 +106,5 @@ fi
 
 echo ""
 echo "If agent is running, test from Zabbix server:"
-echo "  podman exec -it zabbix-server-pgsql zabbix_get -s 10.1.10.53 -k speedtest.download"
+echo "  podman exec -it zabbix-server-pgsql zabbix_get -s ${MONITORED_HOST_IP} -k speedtest.download"
 

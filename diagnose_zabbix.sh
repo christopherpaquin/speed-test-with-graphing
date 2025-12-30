@@ -1,10 +1,20 @@
 #!/bin/bash
 #
 # Diagnostic script to check Zabbix integration setup
-# Run this on the MONITORED HOST (10.1.10.53)
+# Run this on the MONITORED HOST
 #
 
 set -e
+
+# Source vars file if it exists
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SCRIPT_DIR/vars" ]; then
+    source "$SCRIPT_DIR/vars"
+fi
+
+# Default values if not set in vars
+MONITORED_HOST_IP="${MONITORED_HOST_IP:-YOUR_MONITORED_HOST_IP}"
+ZABBIX_SERVER_IP="${ZABBIX_SERVER_IP:-YOUR_ZABBIX_SERVER_IP}"
 
 # Colors
 GREEN='\033[0;32m'
@@ -203,6 +213,6 @@ else
 fi
 echo ""
 echo "After fixing, test from Zabbix server:"
-echo "  podman exec -it zabbix-server-pgsql zabbix_get -s 10.1.10.53 -k speedtest.download"
+echo "  podman exec -it zabbix-server-pgsql zabbix_get -s ${MONITORED_HOST_IP} -k speedtest.download"
 echo ""
 
