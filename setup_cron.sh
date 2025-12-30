@@ -69,15 +69,35 @@ if crontab -l 2>/dev/null | grep -q "$CRON_TAG"; then
 fi
 
 # Add new cron job
-(crontab -l 2>/dev/null | grep -v "$CRON_TAG"; echo "$CRON_JOB $CRON_TAG") | crontab -
+TEMP_CRON=$(mktemp) || {
+    log_error "Failed to create temporary file"
+    exit 1
+}
+(crontab -l 2>/dev/null | grep -v "$CRON_TAG" | grep -v "speedtest_runner.py"; echo "$CRON_JOB $CRON_TAG") > "$TEMP_CRON" || {
+    log_error "Failed to write to temporary file"
+    rm -f "$TEMP_CRON"
+    exit 1
+}
+crontab "$TEMP_CRON" || {
+    log_error "Failed to install crontab"
+    rm -f "$TEMP_CRON"
+    exit 1
+}
+rm -f "$TEMP_CRON"
 
 log_info "Cron job added successfully!"
 log_info "Speedtest will run every $SPEEDTEST_INTERVAL minutes"
 log_info "Logs will be written to: $PROJECT_DIR/speedtest_cron.log"
 
 # Verify cron job was added
-log_info "Current cron jobs for $CRON_USER:"
-crontab -l 2>/dev/null | grep -A 1 -B 1 "$CRON_TAG" || log_warn "Could not verify cron job"
+log_info "Verifying cron job was added..."
+if crontab -l 2>/dev/null | grep -q "speedtest_runner.py"; then
+    log_info "✓ Cron job verified successfully!"
+    log_info "Current cron job:"
+    crontab -l 2>/dev/null | grep "speedtest_runner.py"
+else
+    log_warn "Could not verify cron job - please check manually with: crontab -l"
+fi
 
 log_info "Cron setup complete!"
 
